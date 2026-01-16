@@ -17,6 +17,7 @@ import com.example.paiv2.database.AppDatabase;
 import com.example.paiv2.entity.Categoria;
 import com.example.paiv2.entity.Produto;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -26,7 +27,8 @@ public class AddProdutoActivity extends AppCompatActivity {
     private ImageView imgProduto;
     private Button btnSalvar;
 
-    private Uri imagemSelecionada;
+    private List<Uri> imagensSelecionadas;
+
     private Categoria categoria;
 
     private AppDatabase db;
@@ -68,48 +70,82 @@ public class AddProdutoActivity extends AppCompatActivity {
                     new ActivityResultContracts.StartActivityForResult(),
                     result -> {
                         if (result.getResultCode() == RESULT_OK && result.getData() != null) {
-                            imagemSelecionada = result.getData().getData();
 
-                            // ESSENCIAL: Garante que o app poderá ler essa imagem no futuro
-                            final int takeFlags = Intent.FLAG_GRANT_READ_URI_PERMISSION;
-                            getContentResolver().takePersistableUriPermission(imagemSelecionada, takeFlags);
+                            imagensSelecionadas = new ArrayList<>();
 
-                            imgProduto.setImageURI(imagemSelecionada);
+                            // MÚLTIPLAS IMAGENS
+                            if (result.getData().getClipData() != null) {
+                                int count = result.getData().getClipData().getItemCount();
+
+                                for (int i = 0; i < count; i++) {
+                                    Uri uri = result.getData().getClipData().getItemAt(i).getUri();
+                                    imagensSelecionadas.add(uri);
+
+                                    getContentResolver().takePersistableUriPermission(
+                                            uri,
+                                            Intent.FLAG_GRANT_READ_URI_PERMISSION
+                                    );
+                                }
+
+                                // Mostra a primeira imagem só como preview
+                                imgProduto.setImageURI(imagensSelecionadas.get(0));
+
+                            } else if (result.getData().getData() != null) {
+                                // Caso o usuário selecione só uma
+                                Uri uri = result.getData().getData();
+                                imagensSelecionadas.add(uri);
+
+                                getContentResolver().takePersistableUriPermission(
+                                        uri,
+                                        Intent.FLAG_GRANT_READ_URI_PERMISSION
+                                );
+
+                                imgProduto.setImageURI(uri);
+                            }
                         }
                     }
             );
 
 
+
     private void salvarProduto() {
-        String nome = edtNome.getText().toString().trim();
 
-        // Validações básicas
-        if (nome.isEmpty()) {
-            edtNome.setError("Digite o nome");
-            return;
-        }
-        if (imagemSelecionada == null) {
-            Toast.makeText(this, "Selecione uma imagem", Toast.LENGTH_SHORT).show();
+        if (imagensSelecionadas == null || imagensSelecionadas.isEmpty()) {
+            Toast.makeText(this, "Selecione ao menos uma imagem", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // Criar o objeto
-        Produto produto = new Produto(nome, imagemSelecionada.toString(), categoria);
-
-        // USANDO UMA THREAD PARA NÃO TRAVAR O APP
         new Thread(() -> {
             try {
-                db.produtoDao().inserir(produto);
+                int contador = 1;
 
-                // Após salvar, volta para a Thread principal para fechar a tela
+                for (Uri uri : imagensSelecionadas) {
+                    Produto produto = new Produto(
+                            "Produto " + contador,
+                            uri.toString(),
+                            categoria
+                    );
+
+                    db.produtoDao().inserir(produto);
+                    contador++;
+                }
+
                 runOnUiThread(() -> {
-                    Toast.makeText(AddProdutoActivity.this, "Salvo com sucesso!", Toast.LENGTH_SHORT).show();
-                    finish(); // Fecha a tela de cadastro
+                    Toast.makeText(
+                            AddProdutoActivity.this,
+                            imagensSelecionadas.size() + " produtos salvos!",
+                            Toast.LENGTH_LONG
+                    ).show();
+                    finish();
                 });
+
             } catch (Exception e) {
-                runOnUiThread(() -> Toast.makeText(AddProdutoActivity.this, "Erro ao salvar", Toast.LENGTH_SHORT).show());
+                runOnUiThread(() ->
+                        Toast.makeText(AddProdutoActivity.this, "Erro ao salvar", Toast.LENGTH_SHORT).show()
+                );
             }
         }).start();
     }
+
 }
 
