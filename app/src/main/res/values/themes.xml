@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.Paiv2"
+        parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+
+        <item name="colorPrimary">@color/azul_logo</item>
+        <item name="colorPrimaryVariant">@color/azul_logo</item>
+        <item name="colorOnPrimary">@color/branco</item>
+
+        <item name="colorSecondary">@color/vermelho_oferta</item>
+        <item name="colorOnSecondary">@color/branco</item>
+
+        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
+
+        <!-- ✅ REMOVIDO materialButtonStyle -->
+    </style>
+
+</resources>

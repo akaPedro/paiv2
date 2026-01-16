@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="azul_logo">#00236F</color>
+    <color name="vermelho_oferta">#C2172F</color>
+    <color name="branco">#FFFFFF</color>
+
+    <color name="azul_logo_dark">#0E244F</color>
+    <color name="vermelho_oferta_dark">#8F162A</color>
+
+    <color name="background_dark">#121212</color>
+    <color name="card_dark">#1F1F1F</color>
+    <color name="texto_principal_dark">#E6E6E6</color>
+</resources>
