@@ -61,33 +61,33 @@ public class MainActivity extends AppCompatActivity {
 //        btnImportar.setOnClickListener(v -> {
 //            Toast.makeText(this, "Importando produtos em massa...", Toast.LENGTH_LONG).show();
 //
-            PopuladorBanco.importarCategoria(
-                    this,
-                    db,
-                    "alim",
-                    Categoria.ALIMENTOS
-            );
-
-            PopuladorBanco.importarCategoria(
-                    this,
-                    db,
-                    "bebes",
-                    Categoria.BEBIDAS
-            );
-
-            PopuladorBanco.importarCategoria(
-                    this,
-                    db,
-                    "high",
-                    Categoria.HIGIENE
-            );
-
-            PopuladorBanco.importarCategoria(
-                    this,
-                    db,
-                    "oto",
-                    Categoria.OUTROS
-            );
+//            PopuladorBanco.importarCategoria(
+//                    this,
+//                    db,
+//                    "alim",
+//                    Categoria.ALIMENTOS
+//            );
+//
+//            PopuladorBanco.importarCategoria(
+//                    this,
+//                    db,
+//                    "bebes",
+//                    Categoria.BEBIDAS
+//            );
+//
+//            PopuladorBanco.importarCategoria(
+//                    this,
+//                    db,
+//                    "high",
+//                    Categoria.HIGIENE
+//            );
+//
+//            PopuladorBanco.importarCategoria(
+//                    this,
+//                    db,
+//                    "oto",
+//                    Categoria.OUTROS
+//            );
 
 
 
