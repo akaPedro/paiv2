@@ -22,15 +22,15 @@ public class ImagemProdutoActivity extends AppCompatActivity {
         String uri = getIntent().getStringExtra("imageUri");
 
         if (uri != null) {
-
-            // 👉 Se veio do assets
-            if (!uri.startsWith("content://") && !uri.startsWith("file://")) {
-                uri = "file:///android_asset/" + uri;
+            if (uri.startsWith("content://") || uri.startsWith("file://")) {
+                Glide.with(this)
+                        .load(Uri.parse(uri))
+                        .into(img);
+            } else {
+                Glide.with(this)
+                        .load("file:///android_asset/" + uri)
+                        .into(img);
             }
-
-            Glide.with(this)
-                    .load(uri)
-                    .into(img);
         }
 
         // Fecha ao tocar fora da imagem

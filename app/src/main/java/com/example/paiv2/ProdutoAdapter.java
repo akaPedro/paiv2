@@ -49,26 +49,44 @@ public class ProdutoAdapter extends RecyclerView.Adapter<ProdutoAdapter.ProdutoV
         Produto produto = listaProdutos.get(position);
         holder.txtNome.setText(produto.getNome());
 
+        // LIMPA imagem reciclada
+        holder.imgProduto.setImageDrawable(null);
 
-        if (produto.getImageUri() != null && !produto.getImageUri().isEmpty()) {
+        String imageUri = produto.getImageUri();
 
-            String caminhoCompleto = "file:///android_asset/" + produto.getImageUri();
+        if (imageUri != null && !imageUri.isEmpty()) {
 
-            // O Glide carrega em background e não trava o scroll
-            Glide.with(context)
-                    .load("file:///android_asset/" + produto.getImageUri())
-                    .into(holder.imgProduto);
+            if (imageUri.startsWith("content://") || imageUri.startsWith("file://")) {
+                // 📷 Galeria / storage
+                Glide.with(context)
+                        .load(Uri.parse(imageUri))
+                        .override(ViewGroup.LayoutParams.MATCH_PARENT, 120)
+                        .fitCenter()                        .dontAnimate()
+                        .placeholder(R.drawable.default_image)
+                        .error(R.drawable.default_image)
+                        .into(holder.imgProduto);
+
+            } else {
+                // 📦 Assets
+                Glide.with(context)
+                        .load("file:///android_asset/" + imageUri)
+                        .override(ViewGroup.LayoutParams.MATCH_PARENT, 120)
+                        .fitCenter()                        .dontAnimate()
+                        .placeholder(R.drawable.default_image)
+                        .error(R.drawable.default_image)
+                        .into(holder.imgProduto);
+            }
+
         } else {
             holder.imgProduto.setImageResource(R.drawable.default_image);
         }
 
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, ImagemProdutoActivity.class);
-            intent.putExtra("imageUri", produto.getImageUri());
+            intent.putExtra("imageUri", imageUri);
             context.startActivity(intent);
         });
 
-//gptanca
         holder.btnMenu.setOnClickListener(v -> {
             PopupMenu popup = new PopupMenu(context, holder.btnMenu);
             popup.inflate(R.menu.menu_produto);
@@ -78,20 +96,18 @@ public class ProdutoAdapter extends RecyclerView.Adapter<ProdutoAdapter.ProdutoV
                     excluirProduto(produto);
                     return true;
                 }
-
                 if (item.getItemId() == R.id.action_edit) {
                     editarProduto(produto);
                     return true;
                 }
-
                 return false;
             });
 
             popup.show();
         });
-
-
     }
+
+
 
     @Override
     public int getItemCount() {
