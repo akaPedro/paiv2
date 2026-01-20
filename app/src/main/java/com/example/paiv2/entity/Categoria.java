@@ -4,5 +4,6 @@ public enum Categoria {
     ALIMENTOS,
     BEBIDAS,
     HIGIENE,
+    DOCES,
     OUTROS
 }

@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
         Button BBebi = findViewById(R.id.btnBebidas);
         Button BHili = findViewById(R.id.btnHigiene);
         Button BOut = findViewById(R.id.btnOutros);
-
+        Button BDoc = findViewById(R.id.btnDoces);
 
 
         BAlim.setOnClickListener(view -> {
@@ -56,11 +56,14 @@ public class MainActivity extends AppCompatActivity {
             startActivity(IntOut);
         });
 
-        // Dentro do onCreate, adicione um botão de teste ou use um existente
+        BDoc.setOnClickListener(v -> {
+            Intent IntDoc = new Intent(MainActivity.this, DoceActivity.class);
+            startActivity(IntDoc);
+        });
 
-//        btnImportar.setOnClickListener(v -> {
-//            Toast.makeText(this, "Importando produtos em massa...", Toast.LENGTH_LONG).show();
-//
+
+        // ////////////////// POPULADORES  \\\\\\\\\\\\\\\\\\\\\\\\\
+        
 //            PopuladorBanco.importarCategoria(
 //                    this,
 //                    db,
@@ -75,6 +78,12 @@ public class MainActivity extends AppCompatActivity {
 //                    Categoria.BEBIDAS
 //            );
 //
+//                PopuladorBanco.importarCategoria(
+//                        this,
+//                        db,
+//                        "doces",
+//                        Categoria.DOCES
+//                );
 //            PopuladorBanco.importarCategoria(
 //                    this,
 //                    db,

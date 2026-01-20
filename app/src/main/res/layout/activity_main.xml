@@ -23,6 +23,18 @@
         app:cornerRadius="15dp" />
 
     <Button
+        android:id="@+id/btnDoces"
+        android:layout_width="match_parent"
+        android:layout_height="85dp"
+        android:text="DOCES"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:textColor="@color/branco"
+        app:backgroundTint="@color/azul_logo"
+        android:layout_marginBottom="16dp"
+        app:cornerRadius="15dp" />
+
+    <Button
         android:id="@+id/btnBebidas"
         android:layout_width="match_parent"
         android:layout_height="85dp"
