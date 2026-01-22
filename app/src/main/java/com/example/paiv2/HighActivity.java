@@ -28,7 +28,7 @@ public class HighActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_alim);
+        setContentView(R.layout.activity_high);
 
         recyclerView = findViewById(R.id.recyclerProdutos);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 3));
