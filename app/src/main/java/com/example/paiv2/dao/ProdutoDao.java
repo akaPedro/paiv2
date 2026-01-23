@@ -41,5 +41,9 @@ public interface ProdutoDao {
 
     @Query("SELECT COUNT(*) FROM produtos WHERE categoria = :categoria")
     int contarPorCategoria(Categoria categoria);
+
+    @Query("SELECT * FROM produtos WHERE nome LIKE '%' || :texto || '%' ORDER BY nome ASC")
+    List<Produto> buscarPorNome(String texto);
+
 }
 

@@ -2,6 +2,7 @@ package com.example.paiv2;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
@@ -66,9 +67,15 @@ public class BebActivity extends AppCompatActivity {
     }
 
     private void carregarProdutos() {
-        List<Produto> produtos =
-                db.produtoDao().listarPorCategoria(CATEGORIA);
+        // Criamos uma thread separada para não travar a UI
+        new Thread(() -> {
+            List<Produto> produtos = db.produtoDao().listarPorCategoriaOrdenado(CATEGORIA);
 
-        adapter.atualizarLista(produtos);
+            // Para atualizar a lista, precisamos voltar para a Main Thread
+            runOnUiThread(() -> {
+                adapter.atualizarLista(produtos);
+                Toast.makeText(BebActivity.this, "Qtd: " + produtos.size(), Toast.LENGTH_SHORT).show();
+            });
+        }).start();
     }
 }

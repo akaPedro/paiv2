@@ -1,72 +1,97 @@
-<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:gravity="center"
     android:padding="24dp"
-    android:background="@color/branco">
+    android:background="@color/branco"
+    android:id="@+id/main">
 
-    <Button
-        android:id="@+id/btnAlimentos"
+    <!-- 🔍 Pesquisa -->
+    <EditText
+        android:id="@+id/edtPesquisar"
         android:layout_width="match_parent"
-        android:layout_height="85dp"
-        android:text="ALIMENTOS"
-        android:textSize="22sp"
-        android:textStyle="bold"
-        android:textColor="@color/branco"
-        app:backgroundTint="@color/azul_logo"
-        android:layout_marginBottom="16dp"
-        app:cornerRadius="15dp" />
+        android:layout_height="wrap_content"
+        android:hint="Pesquisar produto"
+        android:inputType="text"
+        android:padding="12dp"
+        android:layout_marginBottom="16dp"/>
 
-    <Button
-        android:id="@+id/btnDoces"
+    <!-- 🟦 Container dos botões -->
+    <LinearLayout
+        android:id="@+id/layoutCategorias"
         android:layout_width="match_parent"
-        android:layout_height="85dp"
-        android:text="DOCES"
-        android:textSize="22sp"
-        android:textStyle="bold"
-        android:textColor="@color/branco"
-        app:backgroundTint="@color/azul_logo"
-        android:layout_marginBottom="16dp"
-        app:cornerRadius="15dp" />
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-    <Button
-        android:id="@+id/btnBebidas"
-        android:layout_width="match_parent"
-        android:layout_height="85dp"
-        android:text="BEBIDAS"
-        android:textSize="22sp"
-        android:textStyle="bold"
-        android:textColor="@color/branco"
-        app:backgroundTint="@color/azul_logo"
-        android:layout_marginBottom="16dp"
-        app:cornerRadius="15dp" />
+        <Button
+            android:id="@+id/btnAlimentos"
+            android:layout_width="match_parent"
+            android:layout_height="85dp"
+            android:text="ALIMENTOS"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="@color/branco"
+            app:backgroundTint="@color/azul_logo"
+            android:layout_marginBottom="16dp"
+            app:cornerRadius="15dp" />
 
-    <Button
-        android:id="@+id/btnHigiene"
-        android:layout_width="match_parent"
-        android:layout_height="85dp"
-        android:text="HIGIENE"
-        android:textSize="22sp"
-        android:textStyle="bold"
-        android:textColor="@color/branco"
-        app:backgroundTint="@color/azul_logo"
-        android:layout_marginBottom="16dp"
-        app:cornerRadius="15dp" />
+        <Button
+            android:id="@+id/btnDoces"
+            android:layout_width="match_parent"
+            android:layout_height="85dp"
+            android:text="DOCES"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="@color/branco"
+            app:backgroundTint="@color/azul_logo"
+            android:layout_marginBottom="16dp"
+            app:cornerRadius="15dp" />
 
-    <Button
-        android:id="@+id/btnOutros"
+        <Button
+            android:id="@+id/btnBebidas"
+            android:layout_width="match_parent"
+            android:layout_height="85dp"
+            android:text="BEBIDAS"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="@color/branco"
+            app:backgroundTint="@color/azul_logo"
+            android:layout_marginBottom="16dp"
+            app:cornerRadius="15dp" />
+
+        <Button
+            android:id="@+id/btnHigiene"
+            android:layout_width="match_parent"
+            android:layout_height="85dp"
+            android:text="HIGIENE"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="@color/branco"
+            app:backgroundTint="@color/azul_logo"
+            android:layout_marginBottom="16dp"
+            app:cornerRadius="15dp" />
+
+        <Button
+            android:id="@+id/btnOutros"
+            android:layout_width="match_parent"
+            android:layout_height="85dp"
+            android:text="OUTROS"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="@color/branco"
+            app:backgroundTint="@color/vermelho_oferta"
+            app:cornerRadius="15dp" />
+
+    </LinearLayout>
+
+    <!-- 📦 Resultados da pesquisa -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerPesquisa"
         android:layout_width="match_parent"
-        android:layout_height="85dp"
-        android:text="OUTROS"
-        android:textSize="22sp"
-        android:textStyle="bold"
-        android:textColor="@color/branco"
-        app:backgroundTint="@color/vermelho_oferta"
-        app:cornerRadius="15dp" />
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:visibility="gone"/>
 
 </LinearLayout>
