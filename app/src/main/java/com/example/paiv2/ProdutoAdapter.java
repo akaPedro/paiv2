@@ -49,6 +49,35 @@ public class ProdutoAdapter extends RecyclerView.Adapter<ProdutoAdapter.ProdutoV
         Produto produto = listaProdutos.get(position);
         holder.txtNome.setText(produto.getNome());
 
+        if (isAlcoolica(produto)) {
+            // 🔴 alcoólicas
+            holder.txtNome.setTextColor(
+                    context.getResources().getColor(R.color.vermelho_oferta)
+            );
+        } else {
+            // 🔵 não alcoólicas
+            holder.txtNome.setTextColor(
+                    context.getResources().getColor(R.color.azul_logo)
+            );
+        }
+
+
+        if (produto.getId() == -1) {
+            holder.txtNome.setText(produto.getNome());
+            holder.txtNome.setTextColor(
+                    context.getResources().getColor(produto.getNome().contains("NÃO")
+                            ? android.R.color.holo_blue_dark
+                            : android.R.color.holo_red_dark)
+            );
+
+            holder.imgProduto.setVisibility(View.GONE);
+            holder.btnMenu.setVisibility(View.GONE);
+            return;
+        }
+
+        holder.imgProduto.setVisibility(View.VISIBLE);
+        holder.btnMenu.setVisibility(View.VISIBLE);
+
         // LIMPA imagem reciclada
         holder.imgProduto.setImageDrawable(null);
 
@@ -175,5 +204,31 @@ public class ProdutoAdapter extends RecyclerView.Adapter<ProdutoAdapter.ProdutoV
         builder.show();
     }
 
+    public boolean isDivisor(int position) {
+        Produto p = listaProdutos.get(position);
+        return p.getId() == -1;
+    }
+
+    private boolean isAlcoolica(Produto p) {
+        String nome = p.getNome().toLowerCase();
+
+        return nome.contains("cerveja")
+                || nome.contains("vinho")
+                || nome.contains("vodka")
+                || nome.contains("whisky")
+                || nome.contains("cachaça")
+                || nome.contains("rum")
+                || nome.contains("caninha")
+                || nome.contains("montila")
+                || nome.contains("ice")
+                || nome.contains("catuaba")
+                || nome.contains("licor")
+                || nome.contains("conhaque")
+                || nome.contains("sidra")
+                || nome.contains("aguardente")
+                || nome.contains("raiz amarga")
+                || nome.contains("corote")
+                || nome.contains("gin");
+    }
 
 }
