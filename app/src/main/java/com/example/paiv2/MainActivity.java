@@ -128,12 +128,12 @@ public class MainActivity extends AppCompatActivity {
 //                        "doces",
 //                        Categoria.DOCES
 //                );
-//            PopuladorBanco.importarCategoria(
-//                    this,
-//                    db,
-//                    "high",
-//                    Categoria.HIGIENE
-//            );
+            PopuladorBanco.importarCategoria(
+                    this,
+                    db,
+                    "high",
+                    Categoria.HIGIENE
+            );
 //
 //            PopuladorBanco.importarCategoria(
 //                    this,

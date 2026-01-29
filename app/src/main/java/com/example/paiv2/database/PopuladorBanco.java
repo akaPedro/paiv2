@@ -10,7 +10,8 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-public class PopuladorBanco {
+public class
+PopuladorBanco {
 
     public static void importarCategoria(
             Context context,
