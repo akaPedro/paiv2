@@ -2,16 +2,17 @@ package com.example.paiv2.database;
 
 import android.content.Context;
 import android.content.res.AssetManager;
+import android.util.Log;
 
 import com.example.paiv2.entity.Categoria;
 import com.example.paiv2.entity.Produto;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.List;
 
-public class
-PopuladorBanco {
+public class PopuladorBanco {
+
+    private static final String TAG = "PopuladorBanco";
 
     public static void importarCategoria(
             Context context,
@@ -26,46 +27,54 @@ PopuladorBanco {
                 String[] arquivos = assetManager.list(pastaAssets);
 
                 if (arquivos == null || arquivos.length == 0) {
-                    System.out.println("⚠️ Pasta vazia: " + pastaAssets);
+                    Log.w(TAG, "⚠️ Pasta vazia ou inexistente: " + pastaAssets);
                     return;
                 }
 
-                // 🔒 Evita duplicação
+                // 1. ORDENAÇÃO ESSENCIAL: Garante que a ordem de inserção
+                // seja idêntica à ordem alfabética (A-Z)
+                Arrays.sort(arquivos);
+
+                // 2. Trava de segurança contra duplicação
                 if (db.produtoDao().contarPorCategoria(categoria) > 0) {
-                    System.out.println("⚠️ Categoria já populada: " + categoria);
+                    Log.i(TAG, "⚠️ Categoria já populada: " + categoria);
                     return;
                 }
+
+                Log.d(TAG, "🚀 Iniciando importação de " + arquivos.length + " itens de: " + pastaAssets);
 
                 for (String nomeArquivo : arquivos) {
-
-                    // Aceita apenas imagens
-                    if (!nomeArquivo.endsWith(".jpg")
-                            && !nomeArquivo.endsWith(".jpeg")
-                            && !nomeArquivo.endsWith(".png")) {
+                    // Aceita apenas extensões de imagem comuns
+                    String lowerNome = nomeArquivo.toLowerCase();
+                    if (!lowerNome.endsWith(".jpg") &&
+                            !lowerNome.endsWith(".jpeg") &&
+                            !lowerNome.endsWith(".png") &&
+                            !lowerNome.endsWith(".webp")) {
                         continue;
                     }
 
                     Produto p = new Produto();
 
-                    // Nome sem extensão
+                    // Nome limpo para exibição (ex: "arroz_branco")
                     String nomeLimpo = nomeArquivo
                             .replace(".jpg", "")
                             .replace(".jpeg", "")
-                            .replace(".png", "");
+                            .replace(".png", "")
+                            .replace(".webp", "");
 
                     p.setNome(nomeLimpo);
                     p.setCategoria(categoria);
 
-                    // Caminho do asset
+                    // 3. CAMINHO COMPLETO: Fundamental para o Glide não se perder
                     p.setImageUri(pastaAssets + "/" + nomeArquivo);
 
                     db.produtoDao().inserir(p);
                 }
 
-                System.out.println("✅ Importação concluída: " + pastaAssets);
+                Log.d(TAG, "✅ Importação concluída com sucesso: " + pastaAssets);
 
             } catch (IOException e) {
-                e.printStackTrace();
+                Log.e(TAG, "❌ Erro ao listar assets em " + pastaAssets, e);
             }
         }).start();
     }

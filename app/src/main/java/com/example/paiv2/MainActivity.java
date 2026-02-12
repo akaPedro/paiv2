@@ -107,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
 
 
 //        \\\\\\\\\\\\\\\\\\  POPULADORES  \\\\\\\\\\\\\\\\\\\\\\\\\
-        
+//
 //            PopuladorBanco.importarCategoria(
 //                    this,
 //                    db,
@@ -122,18 +122,18 @@ public class MainActivity extends AppCompatActivity {
 //                    Categoria.BEBIDAS
 //            );
 //
-//                PopuladorBanco.importarCategoria(
-//                        this,
-//                        db,
-//                        "doces",
-//                        Categoria.DOCES
-//                );
-            PopuladorBanco.importarCategoria(
-                    this,
-                    db,
-                    "high",
-                    Categoria.HIGIENE
-            );
+//            PopuladorBanco.importarCategoria(
+//                    this,
+//                    db,
+//                    "doces",
+//                    Categoria.DOCES
+//            );
+//            PopuladorBanco.importarCategoria(
+//                    this,
+//                    db,
+//                    "high",
+//                    Categoria.HIGIENE
+//            );
 //
 //            PopuladorBanco.importarCategoria(
 //                    this,

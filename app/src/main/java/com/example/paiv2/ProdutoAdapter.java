@@ -13,22 +13,23 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
-import com.bumptech.glide.Glide;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.example.paiv2.database.AppDatabase;
 import com.example.paiv2.entity.Produto;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ProdutoAdapter extends RecyclerView.Adapter<ProdutoAdapter.ProdutoViewHolder> {
 
     private List<Produto> listaProdutos = new ArrayList<>();
-    private Context context;
-
-
+    private final Context context;
 
 
     public ProdutoAdapter(Context context, List<Produto> listaProdutos) {
@@ -39,108 +40,86 @@ public class ProdutoAdapter extends RecyclerView.Adapter<ProdutoAdapter.ProdutoV
     @NonNull
     @Override
     public ProdutoViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context)
-                .inflate(R.layout.item_produto, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.item_produto, parent, false);
         return new ProdutoViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ProdutoViewHolder holder, int position) {
-        Produto produto = listaProdutos.get(position);
-        holder.txtNome.setText(produto.getNome());
+        final Produto produto = listaProdutos.get(position);
 
-        if (isAlcoolica(produto)) {
-            // 🔴 alcoólicas
-            holder.txtNome.setTextColor(
-                    context.getResources().getColor(R.color.vermelho_oferta)
-            );
-        } else {
-            // 🔵 não alcoólicas
-            holder.txtNome.setTextColor(
-                    context.getResources().getColor(R.color.azul_logo)
-            );
-        }
-
-
+        // 1. Tratamento de Divisores
         if (produto.getId() == -1) {
             holder.txtNome.setText(produto.getNome());
-            holder.txtNome.setTextColor(
-                    context.getResources().getColor(produto.getNome().contains("NÃO")
-                            ? android.R.color.holo_blue_dark
-                            : android.R.color.holo_red_dark)
-            );
-
+            holder.txtNome.setTextColor(context.getResources().getColor(
+                    produto.getNome().contains("NÃO") ? android.R.color.holo_blue_dark : android.R.color.holo_red_dark
+            ));
             holder.imgProduto.setVisibility(View.GONE);
             holder.btnMenu.setVisibility(View.GONE);
+            holder.itemView.setOnClickListener(null);
             return;
         }
 
+        // 2. Configuração Básica
         holder.imgProduto.setVisibility(View.VISIBLE);
         holder.btnMenu.setVisibility(View.VISIBLE);
+        holder.txtNome.setText(produto.getNome());
+        holder.txtNome.setTextColor(context.getResources().getColor(
+                isAlcoolica(produto) ? R.color.vermelho_oferta : R.color.azul_logo
+        ));
 
-        // LIMPA imagem reciclada
-        holder.imgProduto.setImageDrawable(null);
+        // 3. Carregamento de Imagem Otimizado
+        Glide.with(context).clear(holder.imgProduto);
 
-        String imageUri = produto.getImageUri();
+        String uriString = produto.getImageUri();
+        if (uriString != null && !uriString.isEmpty()) {
+            Object model;
 
-        if (imageUri != null && !imageUri.isEmpty()) {
-
-            if (imageUri.startsWith("content://") || imageUri.startsWith("file://")) {
-                // 📷 Galeria / storage
-                Glide.with(context)
-                        .load(Uri.parse(imageUri))
-                        .override(ViewGroup.LayoutParams.MATCH_PARENT, 120)
-                        .fitCenter()                        .dontAnimate()
-                        .placeholder(R.drawable.default_image)
-                        .error(R.drawable.default_image)
-                        .into(holder.imgProduto);
-
+            // Identifica a origem do arquivo para o Glide
+            if (uriString.startsWith("/")) {
+                // Caminho Interno (Cópia da Galeria) - PRIORIDADE
+                model = new File(uriString);
+            } else if (uriString.startsWith("content://") || uriString.startsWith("file://")) {
+                // URI Direta da Galeria (Legado)
+                model = Uri.parse(uriString);
             } else {
-                // 📦 Assets
-                Glide.with(context)
-                        .load("file:///android_asset/" + imageUri)
-                        .override(ViewGroup.LayoutParams.MATCH_PARENT, 120)
-                        .fitCenter()                        .dontAnimate()
-                        .placeholder(R.drawable.default_image)
-                        .error(R.drawable.default_image)
-                        .into(holder.imgProduto);
+                // Assets (Caminho relativo)
+                model = "file:///android_asset/" + uriString;
             }
 
+            Glide.with(context)
+                    .load(model)
+                    .override(320, 320)
+                    .fitCenter()
+                    .thumbnail(0.1f)
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .placeholder(R.drawable.default_image)
+                    .error(R.drawable.default_image)
+                    .into(holder.imgProduto);
         } else {
             holder.imgProduto.setImageResource(R.drawable.default_image);
         }
 
+        // 4. Clique para abrir imagem grande
         holder.itemView.setOnClickListener(v -> {
+            String path = produto.getImageUri();
+            if (path == null || path.isEmpty()) return;
+
             Intent intent = new Intent(context, ImagemProdutoActivity.class);
-            intent.putExtra("imageUri", imageUri);
+            intent.putExtra("imageUri", path);
             context.startActivity(intent);
         });
 
-        holder.btnMenu.setOnClickListener(v -> {
-            PopupMenu popup = new PopupMenu(context, holder.btnMenu);
-            popup.inflate(R.menu.menu_produto);
-
-            popup.setOnMenuItemClickListener(item -> {
-                if (item.getItemId() == R.id.action_delete) {
-                    excluirProduto(produto);
-                    return true;
-                }
-                if (item.getItemId() == R.id.action_edit) {
-                    editarProduto(produto);
-                    return true;
-                }
-                return false;
-            });
-
-            popup.show();
-        });
+        holder.btnMenu.setOnClickListener(v -> mostrarMenu(holder.btnMenu, produto));
     }
 
-
+    @Override
+    public int getItemCount() { return listaProdutos.size(); }
 
     @Override
-    public int getItemCount() {
-        return listaProdutos.size();
+    public void onViewRecycled(@NonNull ProdutoViewHolder holder) {
+        super.onViewRecycled(holder);
+        Glide.with(context).clear(holder.imgProduto);
     }
 
     public void atualizarLista(List<Produto> novaLista) {
@@ -150,7 +129,6 @@ public class ProdutoAdapter extends RecyclerView.Adapter<ProdutoAdapter.ProdutoV
     }
 
     static class ProdutoViewHolder extends RecyclerView.ViewHolder {
-
         ImageView imgProduto;
         TextView txtNome;
         ImageButton btnMenu;
@@ -160,16 +138,19 @@ public class ProdutoAdapter extends RecyclerView.Adapter<ProdutoAdapter.ProdutoV
             imgProduto = itemView.findViewById(R.id.imgProduto);
             txtNome = itemView.findViewById(R.id.txtNomeProduto);
             btnMenu = itemView.findViewById(R.id.btnMenu);
-
         }
     }
 
+    // --- MÉTODOS DE APOIO ---
+
     private void excluirProduto(Produto produto) {
         AppDatabase db = AppDatabase.getInstance(context);
-
         new Thread(() -> {
             db.produtoDao().deletar(produto);
-
+            // Se for um arquivo interno, deleta o arquivo físico também para não lotar o celular
+            if (produto.getImageUri() != null && produto.getImageUri().startsWith("/")) {
+                new File(produto.getImageUri()).delete();
+            }
             ((Activity) context).runOnUiThread(() -> {
                 listaProdutos.remove(produto);
                 notifyDataSetChanged();
@@ -180,55 +161,61 @@ public class ProdutoAdapter extends RecyclerView.Adapter<ProdutoAdapter.ProdutoV
     private void editarProduto(Produto produto) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("Editar nome");
-
         final EditText input = new EditText(context);
         input.setText(produto.getNome());
         builder.setView(input);
+
+        // Faz com que o texto seja selecionado assim que ganhar foco
+        input.setSelectAllOnFocus(true);
+        input.requestFocus();
+        // Seleciona tudo explicitamente do início ao fim
+        input.setSelection(0, input.getText().length());
 
         builder.setPositiveButton("Salvar", (dialog, which) -> {
             String novoNome = input.getText().toString().trim();
             if (!novoNome.isEmpty()) {
                 produto.setNome(novoNome);
-
-                AppDatabase db = AppDatabase.getInstance(context);
-
                 new Thread(() -> {
-                    db.produtoDao().atualizar(produto);
-
+                    AppDatabase.getInstance(context).produtoDao().atualizar(produto);
                     ((Activity) context).runOnUiThread(this::notifyDataSetChanged);
                 }).start();
             }
         });
-
         builder.setNegativeButton("Cancelar", null);
         builder.show();
     }
 
-    public boolean isDivisor(int position) {
-        Produto p = listaProdutos.get(position);
-        return p.getId() == -1;
+    private boolean isAlcoolica(Produto p) {
+        String n = p.getNome().toLowerCase();
+        return n.contains("cerveja") || n.contains("vinho") || n.contains("vodka") ||
+                n.contains("whisky") || n.contains("cachaça") || n.contains("rum") ||
+                n.contains("ice") || n.contains("gin") || n.contains("conhaque") ||
+                n.contains("caipirinha") || n.contains("licor");
     }
 
-    private boolean isAlcoolica(Produto p) {
-        String nome = p.getNome().toLowerCase();
+    private void mostrarMenu(View anchor, Produto produto) {
+        PopupMenu popup = new PopupMenu(context, anchor);
+        popup.inflate(R.menu.menu_produto);
+        popup.setOnMenuItemClickListener(item -> {
+            int id = item.getItemId();
+            if (id == R.id.action_delete) {
+                excluirProduto(produto);
+                return true;
+            } else if (id == R.id.action_edit) {
+                editarProduto(produto);
+                return true;
+            }
+            return false;
+        });
+        popup.show();
+    }
 
-        return nome.contains("cerveja")
-                || nome.contains("vinho")
-                || nome.contains("vodka")
-                || nome.contains("whisky")
-                || nome.contains("cachaça")
-                || nome.contains("rum")
-                || nome.contains("caninha")
-                || nome.contains("montila")
-                || nome.contains("ice")
-                || nome.contains("catuaba")
-                || nome.contains("licor")
-                || nome.contains("conhaque")
-                || nome.contains("sidra")
-                || nome.contains("aguardente")
-                || nome.contains("raiz amarga")
-                || nome.contains("corote")
-                || nome.contains("gin");
+    // Adicione isso no ProdutoAdapter.java
+    public boolean isDivisor(int position) {
+        if (position >= 0 && position < listaProdutos.size()) {
+            return listaProdutos.get(position).getId() == -1;
+        }
+        return false;
     }
 
 }

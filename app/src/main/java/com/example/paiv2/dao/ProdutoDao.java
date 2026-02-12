@@ -26,13 +26,11 @@ public interface ProdutoDao {
 
 
 
-    @Query("SELECT * FROM produtos WHERE categoria = :categoria")
+    @Query("SELECT * FROM produtos WHERE categoria = :categoria ORDER BY nome COLLATE NOCASE ASC")
     List<Produto> listarPorCategoria(Categoria categoria);
 
-
-    @Query("SELECT * FROM produtos")
+    @Query("SELECT * FROM produtos ORDER BY nome COLLATE NOCASE ASC")
     List<Produto> listarTodos();
-
     @Delete
     void deletar(Produto produto);
 
