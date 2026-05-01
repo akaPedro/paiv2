@@ -8,8 +8,7 @@ import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.Toast;
+import android.widget.ScrollView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,8 +19,6 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.paiv2.database.AppDatabase;
-import com.example.paiv2.database.PopuladorBanco;
-import com.example.paiv2.entity.Categoria;
 import com.example.paiv2.entity.Produto;
 
 import java.util.ArrayList;
@@ -39,50 +36,41 @@ public class MainActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
 
+        // Referências do Layout
         EditText edtPesquisar = findViewById(R.id.edtPesquisar);
-        LinearLayout layoutCategorias = findViewById(R.id.layoutCategorias);
+        ScrollView scrollCategorias = findViewById(R.id.scrollCategorias);
         RecyclerView recycler = findViewById(R.id.recyclerPesquisa);
 
+        // Configuração do Banco e Adapter
         adapter = new ProdutoAdapter(this, new ArrayList<>());
         db = AppDatabase.getInstance(this);
 
         recycler.setLayoutManager(new GridLayoutManager(this, 2));
         recycler.setAdapter(adapter);
 
+        // IDs dos Botões conforme seu XML
         Button BAlim = findViewById(R.id.btnAlimentos);
         Button BBebi = findViewById(R.id.btnBebidas);
         Button BHili = findViewById(R.id.btnHigiene);
         Button BOut = findViewById(R.id.btnOutros);
         Button BDoc = findViewById(R.id.btnDoces);
 
-
+        // Listeners dos Botões
         BAlim.setOnClickListener(view -> {
-            Intent IntAlim = new Intent(MainActivity.this, AlimActivity.class);
-            startActivity(IntAlim);
+            startActivity(new Intent(MainActivity.this, AlimActivity.class));
             finish();
         });
 
         BBebi.setOnClickListener(v -> {
-            Intent IntBeb = new Intent(MainActivity.this, BebActivity.class);
-            startActivity(IntBeb);
+            startActivity(new Intent(MainActivity.this, BebActivity.class));
             finish();
         });
 
-        BHili.setOnClickListener(v -> {
-            Intent IntHili = new Intent(MainActivity.this, HighActivity.class);
-            startActivity(IntHili);
-        });
+        BHili.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, HighActivity.class)));
+        BOut.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, OtoActivity.class)));
+        BDoc.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, DoceActivity.class)));
 
-        BOut.setOnClickListener(v -> {
-            Intent IntOut = new Intent(MainActivity.this, OtoActivity.class);
-            startActivity(IntOut);
-        });
-
-        BDoc.setOnClickListener(v -> {
-            Intent IntDoc = new Intent(MainActivity.this, DoceActivity.class);
-            startActivity(IntDoc);
-        });
-
+        // Lógica de Pesquisa e Visibilidade
         edtPesquisar.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -92,10 +80,12 @@ public class MainActivity extends AppCompatActivity {
                 String texto = s.toString().trim();
 
                 if (texto.isEmpty()) {
+                    // Se estiver vazio, mostra as categorias e esconde a lista
                     recycler.setVisibility(View.GONE);
-                    layoutCategorias.setVisibility(View.VISIBLE);
+                    scrollCategorias.setVisibility(View.VISIBLE);
                 } else {
-                    layoutCategorias.setVisibility(View.GONE);
+                    // Se tiver texto, esconde categorias e mostra resultados
+                    scrollCategorias.setVisibility(View.GONE);
                     recycler.setVisibility(View.VISIBLE);
                     buscarProdutos(texto);
                 }
@@ -105,48 +95,11 @@ public class MainActivity extends AppCompatActivity {
             public void afterTextChanged(Editable s) {}
         });
 
-
-//        \\\\\\\\\\\\\\\\\\  POPULADORES  \\\\\\\\\\\\\\\\\\\\\\\\\
-//
-//            PopuladorBanco.importarCategoria(
-//                    this,
-//                    db,
-//                    "alim",
-//                    Categoria.ALIMENTOS
-//            );
-//
-//            PopuladorBanco.importarCategoria(
-//                    this,
-//                    db,
-//                    "bebes",
-//                    Categoria.BEBIDAS
-//            );
-//
-//            PopuladorBanco.importarCategoria(
-//                    this,
-//                    db,
-//                    "doces",
-//                    Categoria.DOCES
-//            );
-//            PopuladorBanco.importarCategoria(
-//                    this,
-//                    db,
-//                    "high",
-//                    Categoria.HIGIENE
-//            );
-//
-//            PopuladorBanco.importarCategoria(
-//                    this,
-//                    db,
-//                    "oto",
-//                    Categoria.OUTROS
-//            );
-
-
-
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+        // Correção do EdgeToEdge: Usando scrollCategorias como referência de View
+        // Para evitar o crash, o findViewById deve encontrar uma View existente.
+        ViewCompat.setOnApplyWindowInsetsListener(scrollCategorias, (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            v.setPadding(v.getPaddingLeft(), systemBars.top, v.getPaddingRight(), systemBars.bottom);
             return insets;
         });
     }
@@ -154,10 +107,7 @@ public class MainActivity extends AppCompatActivity {
     private void buscarProdutos(String texto) {
         new Thread(() -> {
             List<Produto> lista = db.produtoDao().buscarPorNome(texto);
-
             runOnUiThread(() -> adapter.atualizarLista(lista));
         }).start();
     }
-
-
 }

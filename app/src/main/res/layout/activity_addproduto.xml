@@ -1,37 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:background="@color/branco">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:layout_height="wrap_content"
+        android:padding="20dp">
 
+        <!-- Imagem do Produto: Proporção 16:9 costuma ser a melhor para fotos de celular -->
         <ImageView
             android:id="@+id/imgSelecionarProduto"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:background="#E0E0E0"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="#F0F0F0"
             android:scaleType="centerCrop"
-            android:src="@android:drawable/ic_menu_gallery" />
+            app:layout_constraintDimensionRatio="H,16:9"
+            app:srcCompat="@android:drawable/ic_menu_gallery"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
 
-        <EditText
-            android:id="@+id/edtNomeProduto"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:hint="Nome do produto" />
-
-        <Button
-            android:id="@+id/btnSalvarProduto"
-            android:layout_width="match_parent"
+        <!-- Campo Nome: Usando TextInputLayout para um visual mais profissional -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/inputLayoutNome"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
-            android:text="Salvar" />
+            app:layout_constraintTop_toBottomOf="@id/imgSelecionarProduto"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
 
-    </LinearLayout>
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edtNomeProduto"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Nome do produto"
+                android:inputType="textCapSentences" />
+        </com.google.android.material.textfield.TextInputLayout>
 
+        <!-- Botão Salvar: Fixado embaixo, mas dentro do ScrollView -->
+        <Button
+            android:id="@+id/btnSalvarProduto"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:layout_marginTop="32dp"
+            android:layout_marginBottom="16dp"
+            android:text="SALVAR PRODUTO"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:cornerRadius="12dp"
+            app:backgroundTint="@color/azul_logo"
+            app:layout_constraintTop_toBottomOf="@id/inputLayoutNome"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintVertical_bias="1.0" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>
