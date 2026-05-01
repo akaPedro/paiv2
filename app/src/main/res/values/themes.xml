@@ -12,8 +12,7 @@
         <item name="colorOnSecondary">@color/branco</item>
 
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
-
-        <!-- ✅ REMOVIDO materialButtonStyle -->
+        
     </style>
 
 </resources>
