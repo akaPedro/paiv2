@@ -2,6 +2,9 @@ package com.example.paiv2;
 
 import com.example.paiv2.entity.Produto;
 
+import java.text.Normalizer;
+import java.util.Locale;
+
 /**
  * Regras compartilhadas sobre produtos, usadas pelas telas e pelo adapter.
  */
@@ -15,6 +18,17 @@ public final class ProdutoUtils {
 
     public static boolean isDivisor(Produto p) {
         return p.getId() == ID_DIVISOR;
+    }
+
+    /**
+     * Remove acentos e coloca em minúsculas, para a busca encontrar
+     * "Açúcar" mesmo digitando "acucar".
+     */
+    public static String normalizar(String texto) {
+        if (texto == null) return "";
+        String semAcentos = Normalizer.normalize(texto, Normalizer.Form.NFD)
+                .replaceAll("\\p{M}", "");
+        return semAcentos.toLowerCase(Locale.ROOT).trim();
     }
 
     public static boolean isAlcoolica(Produto p) {

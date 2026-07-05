@@ -111,4 +111,20 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
+    <!-- Aviso quando a pesquisa não encontra nada -->
+    <TextView
+        android:id="@+id/txtSemResultados"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="48dp"
+        android:gravity="center"
+        android:text="Nenhum produto encontrado"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="@color/azul_logo"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/edtPesquisar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

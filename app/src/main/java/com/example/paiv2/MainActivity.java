@@ -1,14 +1,16 @@
 package com.example.paiv2;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ScrollView;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,10 +29,35 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
+    // Espera o usuário parar de digitar antes de buscar, evitando refazer a busca a cada tecla
+    private static final long ATRASO_BUSCA_MS = 200;
+
     private ProdutoAdapter adapter;
     private AppDatabase db;
 
-    @SuppressLint("MissingInflatedId")
+    private EditText edtPesquisar;
+    private ScrollView scrollCategorias;
+    private RecyclerView recycler;
+    private TextView txtSemResultados;
+
+    private final Handler buscaHandler = new Handler(Looper.getMainLooper());
+    private Runnable buscaAgendada;
+    // Cada busca ganha um número de versão; resultados de buscas antigas são descartados
+    private int versaoBusca = 0;
+
+    // Produtos com nome já normalizado, para filtrar em memória sem depender de acentos
+    private List<ItemBusca> cacheBusca;
+
+    private static class ItemBusca {
+        final Produto produto;
+        final String nomeNormalizado;
+
+        ItemBusca(Produto produto) {
+            this.produto = produto;
+            this.nomeNormalizado = ProdutoUtils.normalizar(produto.getNome());
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,9 +65,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // Referências do Layout
-        EditText edtPesquisar = findViewById(R.id.edtPesquisar);
-        ScrollView scrollCategorias = findViewById(R.id.scrollCategorias);
-        RecyclerView recycler = findViewById(R.id.recyclerPesquisa);
+        edtPesquisar = findViewById(R.id.edtPesquisar);
+        scrollCategorias = findViewById(R.id.scrollCategorias);
+        recycler = findViewById(R.id.recyclerPesquisa);
+        txtSemResultados = findViewById(R.id.txtSemResultados);
 
         // Configuração do Banco e Adapter
         adapter = new ProdutoAdapter(this, new ArrayList<>());
@@ -71,18 +99,23 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (buscaAgendada != null) buscaHandler.removeCallbacks(buscaAgendada);
                 String texto = s.toString().trim();
 
                 if (texto.isEmpty()) {
-                    // Se estiver vazio, mostra as categorias e esconde a lista
+                    // Invalida qualquer busca em andamento e volta para as categorias
+                    versaoBusca++;
                     recycler.setVisibility(View.GONE);
+                    txtSemResultados.setVisibility(View.GONE);
                     scrollCategorias.setVisibility(View.VISIBLE);
-                } else {
-                    // Se tiver texto, esconde categorias e mostra resultados
-                    scrollCategorias.setVisibility(View.GONE);
-                    recycler.setVisibility(View.VISIBLE);
-                    buscarProdutos(texto);
+                    return;
                 }
+
+                scrollCategorias.setVisibility(View.GONE);
+                recycler.setVisibility(View.VISIBLE);
+
+                buscaAgendada = () -> buscarProdutos(texto);
+                buscaHandler.postDelayed(buscaAgendada, ATRASO_BUSCA_MS);
             }
 
             @Override
@@ -98,14 +131,82 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Produtos podem ter sido adicionados/editados/removidos em outras telas
+        invalidarCacheBusca();
+        String texto = edtPesquisar.getText().toString().trim();
+        if (!texto.isEmpty()) {
+            buscarProdutos(texto);
+        }
+    }
+
     private void abrirCategoria(Categoria categoria) {
         startActivity(CategoriaActivity.novaIntent(this, categoria));
     }
 
     private void buscarProdutos(String texto) {
+        final int versao = ++versaoBusca;
         new Thread(() -> {
-            List<Produto> lista = db.produtoDao().buscarPorNome(texto);
-            runOnUiThread(() -> adapter.atualizarLista(lista));
+            List<Produto> resultado = filtrar(obterCacheBusca(), texto);
+            runOnUiThread(() -> {
+                // Se outra busca começou (ou o campo foi limpo), esse resultado já é velho
+                if (versao != versaoBusca) return;
+                adapter.atualizarLista(resultado);
+                txtSemResultados.setVisibility(resultado.isEmpty() ? View.VISIBLE : View.GONE);
+            });
         }).start();
+    }
+
+    private synchronized List<ItemBusca> obterCacheBusca() {
+        if (cacheBusca == null) {
+            List<ItemBusca> itens = new ArrayList<>();
+            for (Produto p : db.produtoDao().listarTodos()) {
+                itens.add(new ItemBusca(p));
+            }
+            cacheBusca = itens;
+        }
+        return cacheBusca;
+    }
+
+    private synchronized void invalidarCacheBusca() {
+        cacheBusca = null;
+    }
+
+    /**
+     * Filtra ignorando acentos e maiúsculas. Cada palavra digitada precisa aparecer
+     * no nome ("leite po" encontra "Leite em Pó"). Resultados onde o termo aparece
+     * mais no início do nome vêm primeiro.
+     */
+    private static List<Produto> filtrar(List<ItemBusca> itens, String texto) {
+        String termo = ProdutoUtils.normalizar(texto);
+        String[] palavras = termo.split("\\s+");
+
+        List<ItemBusca> encontrados = new ArrayList<>();
+        for (ItemBusca item : itens) {
+            boolean contemTodas = true;
+            for (String palavra : palavras) {
+                if (!item.nomeNormalizado.contains(palavra)) {
+                    contemTodas = false;
+                    break;
+                }
+            }
+            if (contemTodas) encontrados.add(item);
+        }
+
+        String primeiraPalavra = palavras[0];
+        encontrados.sort((a, b) -> {
+            int posA = a.nomeNormalizado.indexOf(primeiraPalavra);
+            int posB = b.nomeNormalizado.indexOf(primeiraPalavra);
+            if (posA != posB) return Integer.compare(posA, posB);
+            return a.nomeNormalizado.compareTo(b.nomeNormalizado);
+        });
+
+        List<Produto> resultado = new ArrayList<>(encontrados.size());
+        for (ItemBusca item : encontrados) {
+            resultado.add(item.produto);
+        }
+        return resultado;
     }
 }
