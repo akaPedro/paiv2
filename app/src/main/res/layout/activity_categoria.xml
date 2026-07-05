@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="@color/branco"
     android:fitsSystemWindows="true"
-    tools:context=".DoceActivity">
+    tools:context=".CategoriaActivity">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerProdutos"

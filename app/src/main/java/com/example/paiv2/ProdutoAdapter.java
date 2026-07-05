@@ -15,6 +15,7 @@ import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -49,9 +50,9 @@ public class ProdutoAdapter extends RecyclerView.Adapter<ProdutoAdapter.ProdutoV
         final Produto produto = listaProdutos.get(position);
 
         // 1. Tratamento de Divisores
-        if (produto.getId() == -1) {
+        if (ProdutoUtils.isDivisor(produto)) {
             holder.txtNome.setText(produto.getNome());
-            holder.txtNome.setTextColor(context.getResources().getColor(
+            holder.txtNome.setTextColor(ContextCompat.getColor(context,
                     produto.getNome().contains("NÃO") ? android.R.color.holo_blue_dark : android.R.color.holo_red_dark
             ));
             holder.imgProduto.setVisibility(View.GONE);
@@ -64,8 +65,8 @@ public class ProdutoAdapter extends RecyclerView.Adapter<ProdutoAdapter.ProdutoV
         holder.imgProduto.setVisibility(View.VISIBLE);
         holder.btnMenu.setVisibility(View.VISIBLE);
         holder.txtNome.setText(produto.getNome());
-        holder.txtNome.setTextColor(context.getResources().getColor(
-                isAlcoolica(produto) ? R.color.vermelho_oferta : R.color.azul_logo
+        holder.txtNome.setTextColor(ContextCompat.getColor(context,
+                ProdutoUtils.isAlcoolica(produto) ? R.color.vermelho_oferta : R.color.azul_logo
         ));
 
         // 3. Carregamento de Imagem Otimizado
@@ -185,14 +186,6 @@ public class ProdutoAdapter extends RecyclerView.Adapter<ProdutoAdapter.ProdutoV
         builder.show();
     }
 
-    private boolean isAlcoolica(Produto p) {
-        String n = p.getNome().toLowerCase();
-        return n.contains("cerveja") || n.contains("vinho") || n.contains("vodka") ||
-                n.contains("whisky") || n.contains("cachaça") || n.contains("rum") ||
-                n.contains("ice") || n.contains("gin") || n.contains("conhaque") ||
-                n.contains("caipirinha") || n.contains("licor");
-    }
-
     private void mostrarMenu(View anchor, Produto produto) {
         PopupMenu popup = new PopupMenu(context, anchor);
         popup.inflate(R.menu.menu_produto);
@@ -210,10 +203,9 @@ public class ProdutoAdapter extends RecyclerView.Adapter<ProdutoAdapter.ProdutoV
         popup.show();
     }
 
-    // Adicione isso no ProdutoAdapter.java
     public boolean isDivisor(int position) {
         if (position >= 0 && position < listaProdutos.size()) {
-            return listaProdutos.get(position).getId() == -1;
+            return ProdutoUtils.isDivisor(listaProdutos.get(position));
         }
         return false;
     }

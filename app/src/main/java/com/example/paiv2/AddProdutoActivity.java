@@ -43,14 +43,14 @@ public class AddProdutoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_addproduto);
 
-        String categoriaStr = getIntent().getStringExtra("categoria");
-        if (categoriaStr != null) {
-            categoria = Categoria.valueOf(categoriaStr);
+        String categoriaStr = getIntent().getStringExtra(CategoriaActivity.EXTRA_CATEGORIA);
+        if (categoriaStr == null) {
+            // Sem categoria não dá para salvar nada — evita produto "perdido" no banco
+            Toast.makeText(this, "Categoria não informada", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
         }
-
-        Toast.makeText(this,
-                "Categoria recebida: " + categoria,
-                Toast.LENGTH_LONG).show();
+        categoria = Categoria.valueOf(categoriaStr);
 
         edtNome = findViewById(R.id.edtNomeProduto);
         imgProduto = findViewById(R.id.imgSelecionarProduto);
@@ -68,6 +68,10 @@ public class AddProdutoActivity extends AppCompatActivity {
         try {
             InputStream is = getContentResolver().openInputStream(uri);
             bitmap = BitmapFactory.decodeStream(is);
+            if (is != null) is.close();
+
+            // Imagem corrompida ou formato não suportado
+            if (bitmap == null) return null;
 
             float aspect = (float) bitmap.getWidth() / bitmap.getHeight();
             redimensionado = Bitmap.createScaledBitmap(bitmap, 800, (int)(800/aspect), true);
@@ -79,7 +83,6 @@ public class AddProdutoActivity extends AppCompatActivity {
             redimensionado.compress(Bitmap.CompressFormat.JPEG, 80, os); // 80% é mais leve para lotes grandes
 
             os.close();
-            is.close();
 
             // --- ISSO AQUI É O SEGREDO PARA GRANDES QUANTIDADES ---
             bitmap.recycle();

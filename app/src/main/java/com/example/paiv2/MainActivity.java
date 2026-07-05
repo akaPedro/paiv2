@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.paiv2.database.AppDatabase;
+import com.example.paiv2.entity.Categoria;
 import com.example.paiv2.entity.Produto;
 
 import java.util.ArrayList;
@@ -55,20 +56,13 @@ public class MainActivity extends AppCompatActivity {
         Button BOut = findViewById(R.id.btnOutros);
         Button BDoc = findViewById(R.id.btnDoces);
 
-        // Listeners dos Botões
-        BAlim.setOnClickListener(view -> {
-            startActivity(new Intent(MainActivity.this, AlimActivity.class));
-            finish();
-        });
-
-        BBebi.setOnClickListener(v -> {
-            startActivity(new Intent(MainActivity.this, BebActivity.class));
-            finish();
-        });
-
-        BHili.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, HighActivity.class)));
-        BOut.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, OtoActivity.class)));
-        BDoc.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, DoceActivity.class)));
+        // Listeners dos Botões: todas as categorias abrem a mesma tela.
+        // A Main não é finalizada, então o botão "voltar" retorna para cá naturalmente.
+        BAlim.setOnClickListener(v -> abrirCategoria(Categoria.ALIMENTOS));
+        BBebi.setOnClickListener(v -> abrirCategoria(Categoria.BEBIDAS));
+        BHili.setOnClickListener(v -> abrirCategoria(Categoria.HIGIENE));
+        BOut.setOnClickListener(v -> abrirCategoria(Categoria.OUTROS));
+        BDoc.setOnClickListener(v -> abrirCategoria(Categoria.DOCES));
 
         // Lógica de Pesquisa e Visibilidade
         edtPesquisar.addTextChangedListener(new TextWatcher() {
@@ -102,6 +96,10 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(v.getPaddingLeft(), systemBars.top, v.getPaddingRight(), systemBars.bottom);
             return insets;
         });
+    }
+
+    private void abrirCategoria(Categoria categoria) {
+        startActivity(CategoriaActivity.novaIntent(this, categoria));
     }
 
     private void buscarProdutos(String texto) {

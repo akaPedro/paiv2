@@ -15,21 +15,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Paiv2">
         <activity
-            android:name=".DoceActivity"
+            android:name=".CategoriaActivity"
             android:exported="false" />
         <activity android:name=".AddProdutoActivity" />
-        <activity
-            android:name=".AlimActivity"
-            android:exported="true" />
-        <activity
-            android:name=".HighActivity"
-            android:exported="true" />
-        <activity
-            android:name=".OtoActivity"
-            android:exported="true" />
-        <activity
-            android:name=".BebActivity"
-            android:exported="true" />
         <activity
             android:name=".ImagemProdutoActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
