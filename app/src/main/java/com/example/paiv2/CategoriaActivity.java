@@ -29,7 +29,8 @@ public class CategoriaActivity extends AppCompatActivity {
     private static final int COLUNAS = 3;
 
     private static final String PREFS = "paiv2_prefs";
-    private static final String KEY_DICA_VISTA = "dica_toque_longo_vista";
+    // Chave nova: quem já tinha visto a dica antiga precisa ver a da seleção
+    private static final String KEY_DICA_VISTA = "dica_selecao_vista";
 
     private ProdutoAdapter adapter;
     private AppDatabase db;
@@ -65,16 +66,18 @@ public class CategoriaActivity extends AppCompatActivity {
         });
         recyclerView.setLayoutManager(manager);
 
+        FloatingActionButton addProds = findViewById(R.id.addProds);
+
         adapter = new ProdutoAdapter(this, new ArrayList<>());
         // Editar, excluir ou mudar a categoria muda a lista: recarrega do banco
         adapter.setAoAlterarProdutos(this::carregarProdutos);
+        AcoesEmLote.instalar(this, adapter, addProds);
         recyclerView.setAdapter(adapter);
 
         db = AppDatabase.getInstance(this);
 
         mostrarDicaToqueLongo();
 
-        FloatingActionButton addProds = findViewById(R.id.addProds);
         addProds.setOnClickListener(v -> {
             Intent intent = new Intent(this, AddProdutoActivity.class);
             intent.putExtra(EXTRA_CATEGORIA, categoria.name());
@@ -83,7 +86,7 @@ public class CategoriaActivity extends AppCompatActivity {
     }
 
     /**
-     * O menu do produto agora abre segurando o card, o que não é óbvio.
+     * A seleção começa segurando um card, o que não é óbvio.
      * Explica uma vez só, na primeira visita a uma categoria.
      */
     private void mostrarDicaToqueLongo() {
@@ -91,7 +94,7 @@ public class CategoriaActivity extends AppCompatActivity {
         if (prefs.getBoolean(KEY_DICA_VISTA, false)) return;
 
         Toast.makeText(this,
-                "Segure em um produto para editar ou excluir",
+                "Segure em um produto para selecionar. Toque nos outros para marcar vários.",
                 Toast.LENGTH_LONG).show();
         prefs.edit().putBoolean(KEY_DICA_VISTA, true).apply();
     }

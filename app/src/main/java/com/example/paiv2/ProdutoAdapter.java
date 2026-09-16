@@ -10,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -28,22 +27,37 @@ import com.google.android.material.textfield.TextInputEditText;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 public class ProdutoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private static final int TIPO_PRODUTO = 0;
     private static final int TIPO_DIVISOR = 1;
 
+    // Marca uma atualização que mexe só na seleção, não no conteúdo do card
+    private static final Object PAYLOAD_SELECAO = new Object();
+
     /** Avisa a tela que os produtos mudaram e a lista precisa ser recarregada. */
     public interface AoAlterarProdutos {
         void aoAlterar();
+    }
+
+    /** Avisa a tela quantos produtos estão marcados (0 = sair do modo de seleção). */
+    public interface AoMudarSelecao {
+        void mudou(int quantidade);
     }
 
     private final List<Produto> listaProdutos;
     private final Context context;
     private final Handler main = new Handler(Looper.getMainLooper());
     private AoAlterarProdutos ouvinte;
+    private AoMudarSelecao ouvinteSelecao;
+
+    // Guardamos ids, não posições: a lista é recarregada o tempo todo
+    private final Set<Integer> selecionados = new LinkedHashSet<>();
+    private boolean modoSelecao = false;
 
     public ProdutoAdapter(Context context, List<Produto> listaProdutos) {
         this.context = context;
@@ -52,6 +66,10 @@ public class ProdutoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     public void setAoAlterarProdutos(AoAlterarProdutos ouvinte) {
         this.ouvinte = ouvinte;
+    }
+
+    public void setAoMudarSelecao(AoMudarSelecao ouvinteSelecao) {
+        this.ouvinteSelecao = ouvinteSelecao;
     }
 
     @Override
@@ -80,6 +98,23 @@ public class ProdutoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         }
     }
 
+    @Override
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position,
+                                 @NonNull List<Object> payloads) {
+        // Só mudou a marcação: repinta o selo sem recarregar a imagem, que piscaria
+        if (!payloads.isEmpty() && holder instanceof ProdutoViewHolder) {
+            marcarSelecao((ProdutoViewHolder) holder, listaProdutos.get(position));
+            return;
+        }
+        super.onBindViewHolder(holder, position, payloads);
+    }
+
+    private void marcarSelecao(ProdutoViewHolder holder, Produto produto) {
+        boolean marcado = selecionados.contains(produto.getId());
+        holder.selecaoFundo.setVisibility(marcado ? View.VISIBLE : View.GONE);
+        holder.selecaoSelo.setVisibility(marcado ? View.VISIBLE : View.GONE);
+    }
+
     private void ligarDivisor(DivisorViewHolder holder, Produto divisor) {
         String titulo = divisor.getNome();
         // Bebida alcoólica continua em vermelho como aviso; os demais títulos em azul
@@ -99,8 +134,14 @@ public class ProdutoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
         carregarImagem(holder.imgProduto, produto.getImageUri());
 
-        // Toque abre a imagem grande
+        marcarSelecao(holder, produto);
+
+        // Fora da seleção, o toque abre a imagem grande; dentro dela, marca e desmarca
         holder.itemView.setOnClickListener(v -> {
+            if (modoSelecao) {
+                alternarSelecao(produto);
+                return;
+            }
             String path = produto.getImageUri();
             if (path == null || path.isEmpty()) return;
 
@@ -109,10 +150,11 @@ public class ProdutoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             context.startActivity(intent);
         });
 
-        // Apertar e segurar abre o menu de editar/excluir
+        // Apertar e segurar começa a seleção
         holder.itemView.setOnLongClickListener(v -> {
             v.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
-            mostrarMenu(v, produto);
+            modoSelecao = true;
+            alternarSelecao(produto);
             return true;
         });
     }
@@ -164,6 +206,15 @@ public class ProdutoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     public void atualizarLista(List<Produto> novaLista) {
         listaProdutos.clear();
         listaProdutos.addAll(novaLista);
+
+        // Produtos excluídos ou que saíram desta tela não podem continuar marcados
+        if (!selecionados.isEmpty()) {
+            Set<Integer> presentes = new LinkedHashSet<>();
+            for (Produto p : listaProdutos) presentes.add(p.getId());
+            boolean mudou = selecionados.retainAll(presentes);
+            if (mudou) avisarSelecao();
+        }
+
         notifyDataSetChanged();
     }
 
@@ -177,11 +228,15 @@ public class ProdutoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     static class ProdutoViewHolder extends RecyclerView.ViewHolder {
         final ImageView imgProduto;
         final TextView txtNome;
+        final View selecaoFundo;
+        final ImageView selecaoSelo;
 
         ProdutoViewHolder(@NonNull View itemView) {
             super(itemView);
             imgProduto = itemView.findViewById(R.id.imgProduto);
             txtNome = itemView.findViewById(R.id.txtNomeProduto);
+            selecaoFundo = itemView.findViewById(R.id.selecaoFundo);
+            selecaoSelo = itemView.findViewById(R.id.selecaoSelo);
         }
     }
 
@@ -196,45 +251,108 @@ public class ProdutoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         }
     }
 
-    // --- MENU E EDIÇÃO ---
+    // --- SELEÇÃO ---
 
-    private void mostrarMenu(View anchor, Produto produto) {
-        PopupMenu popup = new PopupMenu(context, anchor);
-        popup.inflate(R.menu.menu_produto);
-        popup.setOnMenuItemClickListener(item -> {
-            int id = item.getItemId();
-            if (id == R.id.action_delete) {
-                confirmarExclusao(produto);
-                return true;
-            } else if (id == R.id.action_edit) {
-                editarProduto(produto);
-                return true;
+    private void alternarSelecao(Produto produto) {
+        Integer id = produto.getId();
+        if (!selecionados.remove(id)) {
+            selecionados.add(id);
+        }
+        int pos = listaProdutos.indexOf(produto);
+        if (pos >= 0) notifyItemChanged(pos, PAYLOAD_SELECAO);
+        avisarSelecao();
+    }
+
+    private void avisarSelecao() {
+        if (ouvinteSelecao != null) ouvinteSelecao.mudou(selecionados.size());
+    }
+
+    public int getQuantidadeSelecionada() {
+        return selecionados.size();
+    }
+
+    public List<Produto> getSelecionados() {
+        List<Produto> marcados = new ArrayList<>();
+        for (Produto p : listaProdutos) {
+            if (!ProdutoUtils.isDivisor(p) && selecionados.contains(p.getId())) {
+                marcados.add(p);
             }
-            return false;
-        });
-        popup.show();
+        }
+        return marcados;
     }
 
-    private void confirmarExclusao(Produto produto) {
-        new AlertDialog.Builder(context)
-                .setTitle("Excluir produto")
-                .setMessage("Excluir \"" + produto.getNome() + "\"?")
-                .setPositiveButton("Excluir", (d, w) -> excluirProduto(produto))
-                .setNegativeButton("Cancelar", null)
-                .show();
+    /** Sai do modo de seleção sem avisar a tela: quem chama já sabe que acabou. */
+    public void sairModoSelecao() {
+        modoSelecao = false;
+        if (selecionados.isEmpty()) return;
+
+        // Repinta só os cards que estavam marcados, para nenhuma imagem recarregar
+        List<Integer> posicoes = new ArrayList<>();
+        for (int i = 0; i < listaProdutos.size(); i++) {
+            if (selecionados.contains(listaProdutos.get(i).getId())) posicoes.add(i);
+        }
+        selecionados.clear();
+        for (int pos : posicoes) notifyItemChanged(pos, PAYLOAD_SELECAO);
     }
 
-    private void excluirProduto(Produto produto) {
+    /** Move os produtos marcados para outra categoria, tudo em uma transação. */
+    public void moverSelecionados(Categoria destino, Runnable aoTerminar) {
+        List<Produto> alvos = getSelecionados();
+        if (alvos.isEmpty()) {
+            aoTerminar.run();
+            return;
+        }
+
         AppDatabase db = AppDatabase.getInstance(context);
         new Thread(() -> {
-            db.produtoDao().deletar(produto);
-            // Se for um arquivo interno, deleta o arquivo físico também para não lotar o celular
-            if (produto.getImageUri() != null && produto.getImageUri().startsWith("/")) {
-                new File(produto.getImageUri()).delete();
-            }
-            main.post(() -> avisarExclusao(produto));
+            db.runInTransaction(() -> {
+                for (Produto p : alvos) {
+                    p.setCategoria(destino);
+                    db.produtoDao().atualizar(p);
+                }
+            });
+            main.post(() -> {
+                aoTerminar.run();
+                avisarEdicao();
+            });
         }).start();
     }
+
+    /** Exclui os produtos marcados, tudo em uma transação. */
+    public void excluirSelecionados(Runnable aoTerminar) {
+        List<Produto> alvos = getSelecionados();
+        if (alvos.isEmpty()) {
+            aoTerminar.run();
+            return;
+        }
+
+        AppDatabase db = AppDatabase.getInstance(context);
+        new Thread(() -> {
+            db.runInTransaction(() -> {
+                for (Produto p : alvos) db.produtoDao().deletar(p);
+            });
+
+            // As fotos só somem depois do banco confirmar: se a transação falhar,
+            // nenhum produto fica no banco apontando para arquivo apagado
+            for (Produto p : alvos) {
+                String uri = p.getImageUri();
+                if (uri != null && uri.startsWith("/")) new File(uri).delete();
+            }
+
+            main.post(() -> {
+                aoTerminar.run();
+                avisarEdicao();
+            });
+        }).start();
+    }
+
+    /** Abre o diálogo de edição do único produto marcado. */
+    public void editarUnicoSelecionado() {
+        List<Produto> marcados = getSelecionados();
+        if (marcados.size() == 1) editarProduto(marcados.get(0));
+    }
+
+    // --- MENU E EDIÇÃO ---
 
     private void editarProduto(Produto produto) {
         View view = LayoutInflater.from(context).inflate(R.layout.dialog_editar_produto, null);
@@ -271,20 +389,7 @@ public class ProdutoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 .show();
     }
 
-    // A tela recarrega a lista do banco. Os tratamentos locais abaixo só entram
-    // em ação se nenhuma tela tiver registrado um ouvinte.
-
-    private void avisarExclusao(Produto produto) {
-        if (ouvinte != null) {
-            ouvinte.aoAlterar();
-            return;
-        }
-        int pos = listaProdutos.indexOf(produto);
-        if (pos >= 0) {
-            listaProdutos.remove(pos);
-            notifyItemRemoved(pos);
-        }
-    }
+    // A tela recarrega a lista do banco; sem ouvinte, redesenha o que está em memória.
 
     private void avisarEdicao() {
         if (ouvinte != null) {

@@ -4,6 +4,9 @@
     <color name="vermelho_oferta">#C2172F</color>
     <color name="branco">#FFFFFF</color>
 
+    <!-- Véu azulado sobre o card selecionado -->
+    <color name="selecao_overlay">#3300236F</color>
+
     <color name="azul_logo_dark">#0E244F</color>
     <color name="vermelho_oferta_dark">#8F162A</color>
 

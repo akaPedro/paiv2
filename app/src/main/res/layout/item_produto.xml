@@ -35,4 +35,22 @@
 
     </LinearLayout>
 
+    <!-- Marcação de selecionado: véu sobre o card + selo no canto -->
+    <View
+        android:id="@+id/selecaoFundo"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/selecao_overlay"
+        android:visibility="gone" />
+
+    <ImageView
+        android:id="@+id/selecaoSelo"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:layout_gravity="top|end"
+        android:layout_margin="6dp"
+        android:contentDescription="Produto selecionado"
+        android:src="@drawable/ic_check_circle"
+        android:visibility="gone" />
+
 </androidx.cardview.widget.CardView>

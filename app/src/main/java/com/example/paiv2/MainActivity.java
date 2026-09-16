@@ -93,6 +93,8 @@ public class MainActivity extends AppCompatActivity {
             invalidarCacheBusca();
             rebuscar();
         });
+        // Dá para marcar vários resultados da busca e mover ou excluir de uma vez
+        AcoesEmLote.instalar(this, adapter);
         db = AppDatabase.getInstance(this);
 
         importarAssetsNaPrimeiraAbertura();
