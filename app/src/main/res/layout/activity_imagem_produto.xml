@@ -10,13 +10,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <!-- Imagem -->
-    <ImageView
+    <!-- Imagem com pinça para zoom -->
+    <com.example.paiv2.ImagemZoomView
         android:id="@+id/imgProdutoGrande"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:adjustViewBounds="true"
-        android:scaleType="fitCenter"
+        android:contentDescription="Imagem do produto"
         android:padding="16dp" />
 
 </FrameLayout>

@@ -2,7 +2,9 @@ package com.example.paiv2;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -25,6 +27,9 @@ public class CategoriaActivity extends AppCompatActivity {
 
     public static final String EXTRA_CATEGORIA = "categoria";
     private static final int COLUNAS = 3;
+
+    private static final String PREFS = "paiv2_prefs";
+    private static final String KEY_DICA_VISTA = "dica_toque_longo_vista";
 
     private ProdutoAdapter adapter;
     private AppDatabase db;
@@ -61,9 +66,13 @@ public class CategoriaActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(manager);
 
         adapter = new ProdutoAdapter(this, new ArrayList<>());
+        // Editar, excluir ou mudar a categoria muda a lista: recarrega do banco
+        adapter.setAoAlterarProdutos(this::carregarProdutos);
         recyclerView.setAdapter(adapter);
 
         db = AppDatabase.getInstance(this);
+
+        mostrarDicaToqueLongo();
 
         FloatingActionButton addProds = findViewById(R.id.addProds);
         addProds.setOnClickListener(v -> {
@@ -71,6 +80,20 @@ public class CategoriaActivity extends AppCompatActivity {
             intent.putExtra(EXTRA_CATEGORIA, categoria.name());
             startActivity(intent);
         });
+    }
+
+    /**
+     * O menu do produto agora abre segurando o card, o que não é óbvio.
+     * Explica uma vez só, na primeira visita a uma categoria.
+     */
+    private void mostrarDicaToqueLongo() {
+        SharedPreferences prefs = getSharedPreferences(PREFS, MODE_PRIVATE);
+        if (prefs.getBoolean(KEY_DICA_VISTA, false)) return;
+
+        Toast.makeText(this,
+                "Segure em um produto para editar ou excluir",
+                Toast.LENGTH_LONG).show();
+        prefs.edit().putBoolean(KEY_DICA_VISTA, true).apply();
     }
 
     // TODA VEZ QUE VOLTAR PARA A TELA
@@ -108,22 +131,15 @@ public class CategoriaActivity extends AppCompatActivity {
         }
 
         if (!naoAlcoolicos.isEmpty()) {
-            listaFinal.add(criarDivisor("NÃO ALCOÓLICAS"));
+            listaFinal.add(ProdutoUtils.criarDivisor("NÃO ALCOÓLICAS"));
             listaFinal.addAll(naoAlcoolicos);
         }
 
         if (!alcoolicos.isEmpty()) {
-            listaFinal.add(criarDivisor("ALCOÓLICAS"));
+            listaFinal.add(ProdutoUtils.criarDivisor("ALCOÓLICAS"));
             listaFinal.addAll(alcoolicos);
         }
 
         return listaFinal;
-    }
-
-    private Produto criarDivisor(String titulo) {
-        Produto divisor = new Produto();
-        divisor.setId(ProdutoUtils.ID_DIVISOR);
-        divisor.setNome(titulo);
-        return divisor;
     }
 }

@@ -43,6 +43,33 @@
                 android:inputType="textCapSentences" />
         </com.google.android.material.textfield.TextInputLayout>
 
+        <!-- Categoria em que o produto será salvo -->
+        <TextView
+            android:id="@+id/lblCategoria"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="Categoria"
+            android:textSize="14sp"
+            app:layout_constraintTop_toBottomOf="@id/inputLayoutNome"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnCategoriaProduto"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:layout_marginTop="4dp"
+            android:gravity="center_vertical|start"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:textSize="16sp"
+            app:icon="@android:drawable/ic_menu_sort_by_size"
+            app:iconGravity="end"
+            app:layout_constraintTop_toBottomOf="@id/lblCategoria"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
         <!-- Botão Salvar: Fixado embaixo, mas dentro do ScrollView -->
         <Button
             android:id="@+id/btnSalvarProduto"
@@ -55,7 +82,7 @@
             android:textStyle="bold"
             app:cornerRadius="12dp"
             app:backgroundTint="@color/azul_logo"
-            app:layout_constraintTop_toBottomOf="@id/inputLayoutNome"
+            app:layout_constraintTop_toBottomOf="@id/btnCategoriaProduto"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

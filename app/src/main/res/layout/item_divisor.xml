@@ -8,20 +8,21 @@
     android:paddingStart="8dp"
     android:paddingEnd="8dp">
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:background="@color/azul_logo"
-        android:layout_marginBottom="8dp"/>
-
     <TextView
-        android:id="@+id/txtNomeProduto"
+        android:id="@+id/txtTituloSecao"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="TÍTULO DA SEÇÃO"
         android:textAlignment="center"
         android:textSize="18sp"
         android:textStyle="bold"
-        android:textColor="@color/azul_logo"/>
+        android:textColor="@color/azul_logo" />
+
+    <View
+        android:id="@+id/linhaSecao"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:layout_marginTop="6dp"
+        android:background="@color/azul_logo" />
 
 </LinearLayout>

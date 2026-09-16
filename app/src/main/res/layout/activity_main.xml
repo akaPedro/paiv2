@@ -13,11 +13,26 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:hint="Pesquisar produto"
+        android:imeOptions="actionSearch"
         android:inputType="text"
+        android:maxLines="1"
         android:padding="12dp"
         android:background="@android:drawable/edit_text"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/btnLimparBusca" />
+
+    <ImageButton
+        android:id="@+id/btnLimparBusca"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="Limpar pesquisa"
+        android:src="@android:drawable/ic_menu_close_clear_cancel"
+        android:visibility="invisible"
+        app:tint="@color/azul_logo"
+        app:layout_constraintTop_toTopOf="@id/edtPesquisar"
+        app:layout_constraintBottom_toBottomOf="@id/edtPesquisar"
         app:layout_constraintEnd_toEndOf="parent" />
 
     <ScrollView
@@ -126,5 +141,45 @@
         app:layout_constraintTop_toBottomOf="@id/edtPesquisar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- ⏳ Primeira abertura: cobre a tela enquanto os produtos são cadastrados -->
+    <LinearLayout
+        android:id="@+id/painelCarregando"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/branco"
+        android:clickable="true"
+        android:focusable="true"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:indeterminateTint="@color/azul_logo" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Preparando os produtos..."
+            android:textColor="@color/azul_logo"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Isso acontece só na primeira vez"
+            android:textColor="@color/azul_logo"
+            android:textSize="14sp" />
+
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

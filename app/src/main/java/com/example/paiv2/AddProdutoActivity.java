@@ -18,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.paiv2.database.AppDatabase;
 import com.example.paiv2.entity.Categoria;
 import com.example.paiv2.entity.Produto;
+import com.google.android.material.button.MaterialButton;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -31,6 +32,7 @@ public class AddProdutoActivity extends AppCompatActivity {
     private EditText edtNome;
     private ImageView imgProduto;
     private Button btnSalvar;
+    private MaterialButton btnCategoria;
 
     private List<Uri> imagensSelecionadas;
 
@@ -43,20 +45,23 @@ public class AddProdutoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_addproduto);
 
+        // A tela de origem sugere a categoria, mas o usuário pode trocar antes de salvar
         String categoriaStr = getIntent().getStringExtra(CategoriaActivity.EXTRA_CATEGORIA);
-        if (categoriaStr == null) {
-            // Sem categoria não dá para salvar nada — evita produto "perdido" no banco
-            Toast.makeText(this, "Categoria não informada", Toast.LENGTH_SHORT).show();
-            finish();
-            return;
-        }
-        categoria = Categoria.valueOf(categoriaStr);
+        categoria = categoriaStr == null ? Categoria.OUTROS : Categoria.valueOf(categoriaStr);
 
         edtNome = findViewById(R.id.edtNomeProduto);
         imgProduto = findViewById(R.id.imgSelecionarProduto);
         btnSalvar = findViewById(R.id.btnSalvarProduto);
+        btnCategoria = findViewById(R.id.btnCategoriaProduto);
 
         db = AppDatabase.getInstance(this);
+
+        btnCategoria.setText(SeletorCategoria.rotulo(categoria));
+        btnCategoria.setOnClickListener(v ->
+                SeletorCategoria.mostrar(this, categoria, escolhida -> {
+                    categoria = escolhida;
+                    btnCategoria.setText(SeletorCategoria.rotulo(escolhida));
+                }));
 
         imgProduto.setOnClickListener(v -> abrirGaleria());
         btnSalvar.setOnClickListener(v -> salvarProduto());
@@ -160,14 +165,17 @@ public class AddProdutoActivity extends AppCompatActivity {
 
         btnSalvar.setEnabled(false);
         btnSalvar.setText("Processando lote...");
+        btnCategoria.setEnabled(false);
+
+        // Congela a categoria escolhida no momento do clique
+        final Categoria categoriaEscolhida = categoria;
 
         new Thread(() -> {
             try {
                 int contador = 1;
-                int total = imagensSelecionadas.size();
 
                 // Definimos o prefixo: Se o usuário não digitou nada, usamos o nome da categoria
-                String prefixo = nomeDigitado.isEmpty() ? categoria.name() : nomeDigitado;
+                String prefixo = nomeDigitado.isEmpty() ? categoriaEscolhida.name() : nomeDigitado;
 
                 for (Uri uri : imagensSelecionadas) {
                     // Copia e redimensiona
@@ -180,7 +188,7 @@ public class AddProdutoActivity extends AppCompatActivity {
                         Produto produto = new Produto(
                                 nomeFinal,
                                 caminhoSeguro,
-                                categoria
+                                categoriaEscolhida
                         );
                         db.produtoDao().inserir(produto);
                     }
@@ -198,7 +206,8 @@ public class AddProdutoActivity extends AppCompatActivity {
             } catch (Exception e) {
                 runOnUiThread(() -> {
                     btnSalvar.setEnabled(true);
-                    btnSalvar.setText("Salvar");
+                    btnSalvar.setText("SALVAR PRODUTO");
+                    btnCategoria.setEnabled(true);
                     Toast.makeText(this, "Erro ao processar lote grande", Toast.LENGTH_SHORT).show();
                 });
             }

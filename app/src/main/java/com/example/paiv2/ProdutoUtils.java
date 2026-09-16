@@ -20,6 +20,44 @@ public final class ProdutoUtils {
         return p.getId() == ID_DIVISOR;
     }
 
+    /** Cria o cabeçalho de seção que aparece ocupando a linha inteira da grade. */
+    public static Produto criarDivisor(String titulo) {
+        Produto divisor = new Produto();
+        divisor.setId(ID_DIVISOR);
+        divisor.setNome(titulo);
+        return divisor;
+    }
+
+    /**
+     * true se as duas palavras diferem por no máximo uma edição: uma letra
+     * trocada, faltando ou sobrando. Serve para a busca perdoar erros de digitação.
+     */
+    public static boolean ateUmaEdicao(String a, String b) {
+        int tamA = a.length();
+        int tamB = b.length();
+        if (Math.abs(tamA - tamB) > 1) return false;
+
+        int i = 0, j = 0, diferencas = 0;
+        while (i < tamA && j < tamB) {
+            if (a.charAt(i) == b.charAt(j)) {
+                i++;
+                j++;
+                continue;
+            }
+            if (++diferencas > 1) return false;
+            // Pula a letra sobrando na palavra mais longa (ou as duas, se do mesmo tamanho)
+            if (tamA > tamB) i++;
+            else if (tamB > tamA) j++;
+            else {
+                i++;
+                j++;
+            }
+        }
+        // Sobrou uma letra no fim de uma das palavras
+        if (i < tamA || j < tamB) diferencas++;
+        return diferencas <= 1;
+    }
+
     /**
      * Remove acentos e coloca em minúsculas, para a busca encontrar
      * "Açúcar" mesmo digitando "acucar".
