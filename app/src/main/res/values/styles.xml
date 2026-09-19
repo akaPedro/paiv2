@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Barra de título sobre fundo colorido -->
+    <style name="Paiv2.Toolbar.Titulo" parent="TextAppearance.Material3.TitleLarge">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/branco</item>
+    </style>
+
+    <style name="Paiv2.Toolbar.Subtitulo" parent="TextAppearance.Material3.BodyMedium">
+        <item name="android:textColor">@color/texto_sobre_cor</item>
+    </style>
+
+    <style name="Paiv2.Toolbar" parent="Widget.Material3.Toolbar">
+        <item name="android:background">@android:color/transparent</item>
+        <item name="titleTextAppearance">@style/Paiv2.Toolbar.Titulo</item>
+        <item name="subtitleTextAppearance">@style/Paiv2.Toolbar.Subtitulo</item>
+        <item name="navigationIconTint">@color/branco</item>
+    </style>
+
+    <!-- Títulos de seção dentro das telas -->
+    <style name="Paiv2.TituloSecao" parent="TextAppearance.Material3.TitleMedium">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@color/texto_primario</item>
+    </style>
+
+    <style name="Paiv2.Rotulo" parent="TextAppearance.Material3.LabelLarge">
+        <item name="android:textSize">15sp</item>
+        <item name="android:textColor">@color/texto_secundario</item>
+    </style>
+
+    <!-- Botões grandes: alvo de toque confortável -->
+    <style name="Paiv2.Botao" parent="Widget.Material3.Button">
+        <item name="android:minHeight">56dp</item>
+        <item name="android:textSize">17sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="cornerRadius">16dp</item>
+    </style>
+
+    <style name="Paiv2.Botao.Contorno" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="android:minHeight">56dp</item>
+        <item name="android:textSize">16sp</item>
+        <item name="cornerRadius">16dp</item>
+    </style>
+
+    <!-- Chips do cabeçalho colorido (Nomear, Selecionar) -->
+    <style name="Paiv2.ChipCabecalho" parent="Widget.Material3.Chip.Assist">
+        <item name="chipBackgroundColor">@color/branco_20</item>
+        <!-- O Material 3 pinta uma superfície branca por baixo; sem isto o fundo translúcido vira branco -->
+        <item name="chipSurfaceColor">@android:color/transparent</item>
+        <item name="chipStrokeWidth">0dp</item>
+        <item name="chipIconTint">@color/branco</item>
+        <item name="chipIconSize">20dp</item>
+        <item name="chipMinHeight">40dp</item>
+        <item name="android:textColor">@color/branco</item>
+        <item name="android:textSize">15sp</item>
+        <item name="rippleColor">@color/branco_20</item>
+    </style>
+
+    <!-- Botões da barra de ações da seleção: ícone em cima, texto embaixo -->
+    <style name="Paiv2.BotaoAcaoSelecao" parent="Widget.Material3.Button.TextButton">
+        <item name="android:minHeight">64dp</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/branco</item>
+        <item name="iconTint">@color/branco</item>
+        <item name="iconGravity">top</item>
+        <item name="iconPadding">4dp</item>
+        <item name="iconSize">24dp</item>
+        <item name="rippleColor">@color/branco_20</item>
+    </style>
+
+    <!-- Cantos arredondados para miniaturas de foto -->
+    <style name="Paiv2.FormaArredondada" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">14dp</item>
+    </style>
+
+</resources>

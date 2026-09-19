@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Cobre o cabeçalho durante a seleção, com a contagem em letra grande embaixo.
+    A altura mínima é igualada à do cabeçalho em código; o espaço de sobra fica
+    entre os botões e a contagem.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/barraSelecaoTopo"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/modo_selecao"
+    android:clickable="true"
+    android:elevation="6dp"
+    android:focusable="true"
+    android:orientation="vertical"
+    android:visibility="gone">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:minHeight="56dp"
+        android:orientation="horizontal"
+        android:paddingStart="4dp"
+        android:paddingEnd="8dp">
+
+        <ImageButton
+            android:id="@+id/btnSairSelecao"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Sair da seleção"
+            android:src="@drawable/ic_fechar"
+            app:tint="@color/branco" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSelecionarTodos"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp"
+            android:text="Todos"
+            android:textColor="@color/branco"
+            android:textSize="16sp"
+            app:icon="@drawable/ic_selecionar_todos"
+            app:iconTint="@color/branco"
+            app:rippleColor="@color/branco_20" />
+    </LinearLayout>
+
+    <!-- Space, não View: com altura automática, uma View comum ocuparia a tela inteira -->
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <TextView
+        android:id="@+id/txtQuantidadeSelecionada"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:paddingBottom="12dp"
+        android:textColor="@color/branco"
+        android:textSize="24sp"
+        android:textStyle="bold" />
+
+</LinearLayout>

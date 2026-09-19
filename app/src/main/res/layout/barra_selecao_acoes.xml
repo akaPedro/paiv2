@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Ações da seleção na parte de baixo, ao alcance do polegar e com texto
+    embaixo de cada ícone (padrão dos celulares Samsung).
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/barraSelecaoAcoes"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/fundo_barra_acoes"
+    android:clickable="true"
+    android:elevation="8dp"
+    android:focusable="true"
+    android:orientation="horizontal"
+    android:paddingStart="8dp"
+    android:paddingTop="6dp"
+    android:paddingEnd="8dp"
+    android:paddingBottom="6dp"
+    android:visibility="gone">
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnSelEditar"
+        style="@style/Paiv2.BotaoAcaoSelecao"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Editar"
+        android:textColor="@color/texto_acao_selecao"
+        app:icon="@drawable/ic_editar"
+        app:iconTint="@color/texto_acao_selecao" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnSelPromocao"
+        style="@style/Paiv2.BotaoAcaoSelecao"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Promoção"
+        android:textColor="@color/texto_acao_selecao"
+        app:icon="@drawable/ic_promocao"
+        app:iconTint="@color/texto_acao_selecao" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnSelMover"
+        style="@style/Paiv2.BotaoAcaoSelecao"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Mover"
+        android:textColor="@color/texto_acao_selecao"
+        app:icon="@drawable/ic_mover"
+        app:iconTint="@color/texto_acao_selecao" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnSelExcluir"
+        style="@style/Paiv2.BotaoAcaoSelecao"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Excluir"
+        android:textColor="@color/texto_acao_selecao"
+        app:icon="@drawable/ic_excluir"
+        app:iconTint="@color/texto_acao_selecao" />
+
+</LinearLayout>

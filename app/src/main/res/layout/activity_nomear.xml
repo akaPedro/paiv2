@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/fundo"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/cabecalho"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/azul_logo"
+        android:orientation="vertical">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            style="@style/Paiv2.Toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="64dp"
+            app:navigationContentDescription="Fechar"
+            app:navigationIcon="@drawable/ic_fechar"
+            app:title="Nomear produtos" />
+
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+            android:id="@+id/progressoNomear"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="14dp"
+            app:indicatorColor="@color/branco"
+            app:trackColor="@color/branco_20"
+            app:trackCornerRadius="3dp"
+            app:trackThickness="6dp" />
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/scrollNomear"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <com.google.android.material.card.MaterialCardView
+                    style="@style/Widget.Material3.CardView.Elevated"
+                    android:layout_width="match_parent"
+                    android:layout_height="220dp"
+                    app:cardBackgroundColor="@color/superficie"
+                    app:cardCornerRadius="20dp"
+                    app:cardElevation="1dp">
+
+                    <ImageView
+                        android:id="@+id/imgNomear"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:contentDescription="Foto do produto"
+                        android:padding="12dp"
+                        android:scaleType="fitCenter" />
+
+                    <TextView
+                        android:id="@+id/txtNomeAtual"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="top|start"
+                        android:layout_margin="10dp"
+                        android:background="@drawable/fundo_pilula"
+                        android:backgroundTint="@color/superficie_variante"
+                        android:paddingStart="10dp"
+                        android:paddingTop="3dp"
+                        android:paddingEnd="10dp"
+                        android:paddingBottom="3dp"
+                        android:textColor="@color/texto_secundario"
+                        android:textSize="13sp" />
+                </com.google.android.material.card.MaterialCardView>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_sugestao"
+                        app:tint="@color/azul_logo" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_weight="1"
+                        android:text="Toque para usar o que está escrito na embalagem"
+                        android:textColor="@color/texto_primario"
+                        android:textSize="15sp"
+                        android:textStyle="bold" />
+
+                    <com.google.android.material.progressindicator.CircularProgressIndicator
+                        android:id="@+id/progressoLeitura"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:indeterminate="true"
+                        android:visibility="gone"
+                        app:indicatorSize="20dp"
+                        app:trackThickness="3dp" />
+                </LinearLayout>
+
+                <HorizontalScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:scrollbars="none">
+
+                    <com.google.android.material.chip.ChipGroup
+                        android:id="@+id/chipsSugestoes"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:chipSpacingHorizontal="8dp"
+                        app:singleLine="true" />
+                </HorizontalScrollView>
+
+                <TextView
+                    android:id="@+id/txtSemSugestoes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="Não achei texto legível nesta foto."
+                    android:textColor="@color/texto_secundario"
+                    android:textSize="15sp"
+                    android:visibility="gone" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/inputNomeNomear"
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:hint="Nome do produto"
+                    app:boxBackgroundColor="@color/superficie"
+                    app:boxCornerRadiusBottomEnd="14dp"
+                    app:boxCornerRadiusBottomStart="14dp"
+                    app:boxCornerRadiusTopEnd="14dp"
+                    app:boxCornerRadiusTopStart="14dp"
+                    app:endIconMode="clear_text">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/edtNomeNomear"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:imeOptions="actionNext"
+                        android:inputType="textCapSentences"
+                        android:maxLines="1"
+                        android:textSize="18sp" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="Categoria"
+                    android:textAppearance="@style/Paiv2.Rotulo" />
+
+                <HorizontalScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:scrollbars="none">
+
+                    <com.google.android.material.chip.ChipGroup
+                        android:id="@+id/chipsCategoriaNomear"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:chipSpacingHorizontal="8dp"
+                        app:singleLine="true" />
+                </HorizontalScrollView>
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+
+        <!-- Fim da fila -->
+        <LinearLayout
+            android:id="@+id/painelConcluido"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/fundo"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="32dp"
+            android:visibility="gone">
+
+            <FrameLayout
+                android:layout_width="104dp"
+                android:layout_height="104dp"
+                android:background="@drawable/fundo_circulo_solido"
+                android:backgroundTint="#D7F2DC">
+
+                <ImageView
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:layout_gravity="center"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_check"
+                    app:tint="@color/cat_alimentos" />
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/txtConcluidoTitulo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:textColor="@color/texto_primario"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/txtConcluidoResumo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:gravity="center"
+                android:textColor="@color/texto_secundario"
+                android:textSize="17sp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnConcluir"
+                style="@style/Paiv2.Botao"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:minWidth="180dp"
+                android:text="Voltar" />
+        </LinearLayout>
+    </FrameLayout>
+
+    <LinearLayout
+        android:id="@+id/rodapeNomear"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/superficie"
+        android:elevation="8dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="12dp"
+        android:paddingTop="10dp"
+        android:paddingEnd="12dp"
+        android:paddingBottom="10dp">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnAnteriorNomear"
+            style="@style/Widget.Material3.Button.IconButton.Outlined"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:contentDescription="Produto anterior"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            app:cornerRadius="16dp"
+            app:icon="@drawable/ic_anterior"
+            app:iconSize="26dp"
+            app:iconTint="@color/texto_primario" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnPular"
+            style="@style/Paiv2.Botao.Contorno"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:text="Pular"
+            android:textColor="@color/texto_primario"
+            app:icon="@drawable/ic_pular"
+            app:iconTint="@color/texto_primario" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSalvarProximo"
+            style="@style/Paiv2.Botao"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_weight="1"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:text="Salvar e próximo"
+            app:icon="@drawable/ic_check" />
+    </LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Sugestão lida na embalagem: tocar acrescenta o texto ao nome -->
+<com.google.android.material.chip.Chip xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/Widget.Material3.Chip.Suggestion"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:textColor="@color/texto_primario"
+    android:textSize="16sp"
+    app:chipBackgroundColor="@color/superficie"
+    app:chipIcon="@drawable/ic_adicionar"
+    app:chipIconSize="18dp"
+    app:chipIconTint="@color/azul_logo"
+    app:chipIconVisible="true"
+    app:chipMinHeight="44dp"
+    app:chipStrokeColor="@color/contorno"
+    app:ensureMinTouchTargetSize="true" />

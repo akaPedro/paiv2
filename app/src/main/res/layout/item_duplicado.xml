@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Uma das cópias dentro de um grupo de repetidos -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/dupCard"
+        style="@style/Widget.Material3.CardView.Filled"
+        android:layout_width="match_parent"
+        android:layout_height="104dp"
+        android:checkable="true"
+        android:clickable="true"
+        android:focusable="true"
+        app:cardBackgroundColor="@color/superficie"
+        app:cardCornerRadius="14dp"
+        app:cardElevation="0dp"
+        app:cardForegroundColor="@color/veu_card_produto"
+        app:checkedIcon="@drawable/ic_check_circle"
+        app:checkedIconMargin="4dp"
+        app:checkedIconSize="24dp"
+        app:strokeColor="@color/contorno_card_produto"
+        app:strokeWidth="3dp">
+
+        <ImageView
+            android:id="@+id/dupFoto"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="Foto do produto"
+            android:padding="6dp"
+            android:scaleType="fitCenter" />
+    </com.google.android.material.card.MaterialCardView>
+
+    <TextView
+        android:id="@+id/dupNome"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:maxLines="2"
+        android:textColor="@color/texto_primario"
+        android:textSize="12sp" />
+
+    <TextView
+        android:id="@+id/dupCategoria"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:maxLines="1"
+        android:textColor="@color/texto_secundario"
+        android:textSize="11sp" />
+
+    <TextView
+        android:id="@+id/dupManter"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="2dp"
+        android:text="Manter"
+        android:textColor="@color/azul_logo"
+        android:textSize="11sp"
+        android:textStyle="bold"
+        android:visibility="invisible" />
+
+</LinearLayout>

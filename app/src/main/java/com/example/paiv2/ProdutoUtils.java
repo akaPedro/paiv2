@@ -1,9 +1,12 @@
 package com.example.paiv2;
 
+import com.example.paiv2.entity.Categoria;
 import com.example.paiv2.entity.Produto;
 
+import java.text.NumberFormat;
 import java.text.Normalizer;
 import java.util.Locale;
+import java.util.regex.Pattern;
 
 /**
  * Regras compartilhadas sobre produtos, usadas pelas telas e pelo adapter.
@@ -13,6 +16,24 @@ public final class ProdutoUtils {
     // Convenção: um Produto com esse id é um divisor de seção, não um item real
     public static final int ID_DIVISOR = -1;
 
+    public static final String TITULO_NAO_ALCOOLICAS = "Não alcoólicas";
+    public static final String TITULO_ALCOOLICAS = "Alcoólicas";
+
+    // Nomes gerados automaticamente: "produto_001" (importação) e "ALIMENTOS 3" (adicionar sem nome)
+    private static final Pattern NOME_PROVISORIO =
+            Pattern.compile("^(produto_\\d+|(alimentos|bebidas|higiene|doces|outros) \\d+)$");
+
+    // Palavras curtas só valem inteiras ("gin" não pode marcar "Ginger Ale");
+    // as longas valem como começo de palavra ("cervejas", "vinhos")
+    private static final String[] BEBIDA_PALAVRA_INTEIRA = {"gin", "rum", "ice", "chope", "chopp"};
+    private static final String[] BEBIDA_INICIO_DE_PALAVRA = {
+            "cerveja", "vinho", "vodka", "whisky", "whiskey", "cachaca", "caninha", "montila",
+            "catuaba", "licor", "conhaque", "sidra", "aguardente", "corote", "caipirinha",
+            "espumante", "tequila"
+    };
+
+    private static final Locale PT_BR = Locale.forLanguageTag("pt-BR");
+
     private ProdutoUtils() {
     }
 
@@ -21,11 +42,29 @@ public final class ProdutoUtils {
     }
 
     /** Cria o cabeçalho de seção que aparece ocupando a linha inteira da grade. */
-    public static Produto criarDivisor(String titulo) {
+    public static Produto criarDivisor(String titulo, Categoria categoria) {
         Produto divisor = new Produto();
         divisor.setId(ID_DIVISOR);
         divisor.setNome(titulo);
+        divisor.setCategoria(categoria);
         return divisor;
+    }
+
+    /** true enquanto o produto ainda tem o nome gerado automaticamente. */
+    public static boolean semNome(Produto p) {
+        String nome = p.getNome();
+        if (nome == null || nome.trim().isEmpty()) return true;
+        return NOME_PROVISORIO.matcher(nome.trim().toLowerCase(Locale.ROOT)).matches();
+    }
+
+    /** 1635 vira "1.635". */
+    public static String numero(int n) {
+        return NumberFormat.getIntegerInstance(PT_BR).format(n);
+    }
+
+    /** "1 produto", "331 produtos". */
+    public static String contagem(int n, String singular, String plural) {
+        return n == 1 ? "1 " + singular : numero(n) + " " + plural;
     }
 
     /**
@@ -69,27 +108,22 @@ public final class ProdutoUtils {
         return semAcentos.toLowerCase(Locale.ROOT).trim();
     }
 
+    /** Só bebidas podem ser alcoólicas: evita marcar "Biscoito Original" por causa de "gin". */
     public static boolean isAlcoolica(Produto p) {
         if (p.getNome() == null) return false;
-        String nome = p.getNome().toLowerCase();
+        if (p.getCategoria() != null && p.getCategoria() != Categoria.BEBIDAS) return false;
 
-        return nome.contains("cerveja")
-                || nome.contains("vinho")
-                || nome.contains("vodka")
-                || nome.contains("whisky")
-                || nome.contains("cachaça")
-                || nome.contains("rum")
-                || nome.contains("caninha")
-                || nome.contains("montila")
-                || nome.contains("ice")
-                || nome.contains("catuaba")
-                || nome.contains("licor")
-                || nome.contains("conhaque")
-                || nome.contains("sidra")
-                || nome.contains("aguardente")
-                || nome.contains("raiz amarga")
-                || nome.contains("corote")
-                || nome.contains("gin")
-                || nome.contains("caipirinha");
+        String nome = normalizar(p.getNome());
+        if (nome.contains("raiz amarga")) return true;
+
+        for (String palavra : nome.split("[^a-z0-9]+")) {
+            for (String chave : BEBIDA_PALAVRA_INTEIRA) {
+                if (palavra.equals(chave)) return true;
+            }
+            for (String chave : BEBIDA_INICIO_DE_PALAVRA) {
+                if (palavra.startsWith(chave)) return true;
+            }
+        }
+        return false;
     }
 }

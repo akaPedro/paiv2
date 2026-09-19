@@ -1,185 +1,546 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/branco"
-    android:fitsSystemWindows="true"
-    android:padding="16dp">
+    android:background="@color/fundo"
+    android:focusable="true"
+    android:focusableInTouchMode="true">
 
-    <EditText
-        android:id="@+id/edtPesquisar"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:hint="Pesquisar produto"
-        android:imeOptions="actionSearch"
-        android:inputType="text"
-        android:maxLines="1"
-        android:padding="12dp"
-        android:background="@android:drawable/edit_text"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/btnLimparBusca" />
+    <!-- A raiz focável tira o foco inicial da busca, para o cursor não piscar nela ao abrir -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-    <ImageButton
-        android:id="@+id/btnLimparBusca"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:contentDescription="Limpar pesquisa"
-        android:src="@android:drawable/ic_menu_close_clear_cancel"
-        android:visibility="invisible"
-        app:tint="@color/azul_logo"
-        app:layout_constraintTop_toTopOf="@id/edtPesquisar"
-        app:layout_constraintBottom_toBottomOf="@id/edtPesquisar"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <ScrollView
-        android:id="@+id/scrollCategorias"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="16dp"
-        android:fillViewport="true"
-        app:layout_constraintTop_toBottomOf="@id/edtPesquisar"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-
+        <!-- Cabeçalho azul: saudação e busca -->
         <LinearLayout
+            android:id="@+id/cabecalho"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:animateLayoutChanges="true"
+            android:background="@color/azul_logo"
+            android:orientation="vertical"
+            android:paddingBottom="16dp">
 
-            <Button
-                android:id="@+id/btnAlimentos"
+            <LinearLayout
+                android:id="@+id/blocoSaudacao"
                 android:layout_width="match_parent"
-                android:layout_height="80dp"
-                android:text="ALIMENTOS"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:textColor="@color/branco"
-                app:backgroundTint="@color/azul_logo"
-                android:layout_marginBottom="12dp"
-                app:cornerRadius="12dp" />
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingStart="20dp"
+                android:paddingTop="20dp"
+                android:paddingEnd="20dp">
 
-            <Button
-                android:id="@+id/btnDoces"
+                <TextView
+                    android:id="@+id/txtSaudacao"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/branco"
+                    android:textSize="28sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/txtResumo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:textColor="@color/texto_sobre_cor"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardBusca"
+                style="@style/Widget.Material3.CardView.Filled"
                 android:layout_width="match_parent"
-                android:layout_height="80dp"
-                android:text="DOCES"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:textColor="@color/branco"
-                app:backgroundTint="@color/azul_logo"
-                android:layout_marginBottom="12dp"
-                app:cornerRadius="12dp" />
+                android:layout_height="56dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="18dp"
+                android:layout_marginEnd="16dp"
+                app:cardBackgroundColor="@color/superficie"
+                app:cardCornerRadius="28dp"
+                app:cardElevation="0dp">
 
-            <Button
-                android:id="@+id/btnBebidas"
-                android:layout_width="match_parent"
-                android:layout_height="80dp"
-                android:text="BEBIDAS"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:textColor="@color/branco"
-                app:backgroundTint="@color/azul_logo"
-                android:layout_marginBottom="12dp"
-                app:cornerRadius="12dp" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingStart="18dp"
+                    android:paddingEnd="4dp">
 
-            <Button
-                android:id="@+id/btnHigiene"
-                android:layout_width="match_parent"
-                android:layout_height="80dp"
-                android:text="HIGIENE"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:textColor="@color/branco"
-                app:backgroundTint="@color/azul_logo"
-                android:layout_marginBottom="12dp"
-                app:cornerRadius="12dp" />
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:importantForAccessibility="no"
+                        android:src="@drawable/ic_busca"
+                        app:tint="@color/texto_secundario" />
 
-            <Button
-                android:id="@+id/btnOutros"
-                android:layout_width="match_parent"
-                android:layout_height="80dp"
-                android:text="OUTROS"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:textColor="@color/branco"
-                app:backgroundTint="@color/vermelho_oferta"
-                app:cornerRadius="12dp"
-                android:layout_marginBottom="16dp"/>
+                    <EditText
+                        android:id="@+id/edtPesquisar"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:background="@null"
+                        android:hint="Buscar produto"
+                        android:imeOptions="actionSearch"
+                        android:importantForAutofill="no"
+                        android:inputType="text"
+                        android:maxLines="1"
+                        android:paddingStart="12dp"
+                        android:paddingEnd="4dp"
+                        android:textColor="@color/texto_primario"
+                        android:textColorHint="@color/texto_secundario"
+                        android:textSize="17sp" />
 
+                    <ImageButton
+                        android:id="@+id/btnLimparBusca"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:contentDescription="Limpar busca"
+                        android:src="@drawable/ic_fechar"
+                        android:visibility="invisible"
+                        app:tint="@color/texto_secundario" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
         </LinearLayout>
-    </ScrollView>
 
-    <!-- 📦 Resultados da Pesquisa (Sobrepõe os botões quando ativo) -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerPesquisa"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:background="@color/branco"
-        android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@id/edtPesquisar"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
 
-    <!-- Aviso quando a pesquisa não encontra nada -->
-    <TextView
-        android:id="@+id/txtSemResultados"
-        android:layout_width="0dp"
+            <androidx.core.widget.NestedScrollView
+                android:id="@+id/scrollCategorias"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <!-- Vitrine da promoção: os três primeiros produtos escolhidos -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardPromocao"
+                        style="@style/Widget.Material3.CardView.Filled"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="20dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        app:cardBackgroundColor="@color/vermelho_oferta"
+                        app:cardCornerRadius="20dp"
+                        app:cardElevation="0dp"
+                        app:rippleColor="@color/branco_20">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="16dp">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center_vertical"
+                                android:orientation="horizontal">
+
+                                <ImageView
+                                    android:layout_width="22dp"
+                                    android:layout_height="22dp"
+                                    android:importantForAccessibility="no"
+                                    android:src="@drawable/ic_promocao"
+                                    app:tint="@color/branco" />
+
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="8dp"
+                                    android:layout_weight="1"
+                                    android:text="Promoção"
+                                    android:textColor="@color/branco"
+                                    android:textSize="20sp"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:id="@+id/txtPromocaoAcao"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:background="@drawable/fundo_pilula"
+                                    android:backgroundTint="@color/branco_20"
+                                    android:paddingStart="12dp"
+                                    android:paddingTop="5dp"
+                                    android:paddingEnd="12dp"
+                                    android:paddingBottom="5dp"
+                                    android:text="Escolher"
+                                    android:textColor="@color/branco"
+                                    android:textSize="14sp"
+                                    android:textStyle="bold" />
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="14dp"
+                                android:orientation="horizontal">
+
+                                <include
+                                    android:id="@+id/vitrine1"
+                                    layout="@layout/item_promo_vitrine"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginEnd="6dp"
+                                    android:layout_weight="1" />
+
+                                <include
+                                    android:id="@+id/vitrine2"
+                                    layout="@layout/item_promo_vitrine"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="3dp"
+                                    android:layout_marginEnd="3dp"
+                                    android:layout_weight="1" />
+
+                                <include
+                                    android:id="@+id/vitrine3"
+                                    layout="@layout/item_promo_vitrine"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginStart="6dp"
+                                    android:layout_weight="1" />
+                            </LinearLayout>
+
+                            <TextView
+                                android:id="@+id/txtPromocaoVazia"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="12dp"
+                                android:text="Toque para escolher os produtos em oferta"
+                                android:textColor="@color/texto_sobre_cor"
+                                android:textSize="15sp" />
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <!-- Aparece enquanto houver produtos com nome provisório -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardNomear"
+                        style="@style/Widget.Material3.CardView.Filled"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="20dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:visibility="gone"
+                        app:cardBackgroundColor="#FFF3D1"
+                        app:cardCornerRadius="20dp"
+                        app:cardElevation="0dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:padding="16dp">
+
+                            <FrameLayout
+                                android:layout_width="48dp"
+                                android:layout_height="48dp"
+                                android:background="@drawable/fundo_circulo_solido"
+                                android:backgroundTint="#FFD76A">
+
+                                <ImageView
+                                    android:layout_width="24dp"
+                                    android:layout_height="24dp"
+                                    android:layout_gravity="center"
+                                    android:importantForAccessibility="no"
+                                    android:src="@drawable/ic_etiqueta"
+                                    app:tint="#6B4A00" />
+                            </FrameLayout>
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="14dp"
+                                android:layout_weight="1"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:id="@+id/txtNomearTitulo"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textColor="@color/texto_primario"
+                                    android:textSize="17sp"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="2dp"
+                                    android:text="Dê nomes para achar na busca"
+                                    android:textColor="@color/texto_secundario"
+                                    android:textSize="15sp" />
+                            </LinearLayout>
+
+                            <ImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:importantForAccessibility="no"
+                                android:src="@drawable/ic_proximo"
+                                app:tint="@color/texto_secundario" />
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <!-- Aparece quando o app encontra produtos repetidos -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardRepetidos"
+                        style="@style/Widget.Material3.CardView.Filled"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="20dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:visibility="gone"
+                        app:cardBackgroundColor="#FFE7D3"
+                        app:cardCornerRadius="20dp"
+                        app:cardElevation="0dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal"
+                            android:padding="16dp">
+
+                            <FrameLayout
+                                android:layout_width="48dp"
+                                android:layout_height="48dp"
+                                android:background="@drawable/fundo_circulo_solido"
+                                android:backgroundTint="#FFB877">
+
+                                <ImageView
+                                    android:layout_width="24dp"
+                                    android:layout_height="24dp"
+                                    android:layout_gravity="center"
+                                    android:importantForAccessibility="no"
+                                    android:src="@drawable/ic_duplicados"
+                                    app:tint="#6B3400" />
+                            </FrameLayout>
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="14dp"
+                                android:layout_weight="1"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:id="@+id/txtRepetidosTitulo"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:textColor="@color/texto_primario"
+                                    android:textSize="17sp"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="2dp"
+                                    android:text="Veja quais são e escolha o que fazer"
+                                    android:textColor="@color/texto_secundario"
+                                    android:textSize="15sp" />
+                            </LinearLayout>
+
+                            <ImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:importantForAccessibility="no"
+                                android:src="@drawable/ic_proximo"
+                                app:tint="@color/texto_secundario" />
+                        </LinearLayout>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="12dp"
+                        android:text="Categorias"
+                        android:textAppearance="@style/Paiv2.TituloSecao" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <include
+                            android:id="@+id/tileAlimentos"
+                            layout="@layout/item_categoria"
+                            android:layout_width="0dp"
+                            android:layout_height="128dp"
+                            android:layout_marginEnd="6dp"
+                            android:layout_weight="1" />
+
+                        <include
+                            android:id="@+id/tileDoces"
+                            layout="@layout/item_categoria"
+                            android:layout_width="0dp"
+                            android:layout_height="128dp"
+                            android:layout_marginStart="6dp"
+                            android:layout_weight="1" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:orientation="horizontal">
+
+                        <include
+                            android:id="@+id/tileBebidas"
+                            layout="@layout/item_categoria"
+                            android:layout_width="0dp"
+                            android:layout_height="128dp"
+                            android:layout_marginEnd="6dp"
+                            android:layout_weight="1" />
+
+                        <include
+                            android:id="@+id/tileHigiene"
+                            layout="@layout/item_categoria"
+                            android:layout_width="0dp"
+                            android:layout_height="128dp"
+                            android:layout_marginStart="6dp"
+                            android:layout_weight="1" />
+                    </LinearLayout>
+
+                    <include
+                        android:id="@+id/tileOutros"
+                        layout="@layout/item_categoria"
+                        android:layout_width="match_parent"
+                        android:layout_height="128dp"
+                        android:layout_marginTop="12dp" />
+                </LinearLayout>
+            </androidx.core.widget.NestedScrollView>
+
+            <!-- Resultados da busca -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerPesquisa"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:paddingStart="7dp"
+                android:paddingTop="4dp"
+                android:paddingEnd="7dp"
+                android:paddingBottom="96dp"
+                android:visibility="gone" />
+
+            <!-- Busca sem resultados -->
+            <LinearLayout
+                android:id="@+id/vazioBusca"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+                android:paddingStart="32dp"
+                android:paddingTop="48dp"
+                android:paddingEnd="32dp"
+                android:visibility="gone">
+
+                <ImageView
+                    android:layout_width="72dp"
+                    android:layout_height="72dp"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_busca"
+                    app:tint="@color/contorno_forte" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="Nenhum produto encontrado"
+                    android:textColor="@color/texto_primario"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/txtVazioDica"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:gravity="center"
+                    android:textColor="@color/texto_secundario"
+                    android:textSize="16sp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnVazioNomear"
+                    style="@style/Paiv2.Botao"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:text="Nomear produtos"
+                    android:visibility="gone"
+                    app:icon="@drawable/ic_etiqueta" />
+            </LinearLayout>
+        </FrameLayout>
+    </LinearLayout>
+
+    <include
+        layout="@layout/barra_selecao_topo"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="48dp"
-        android:gravity="center"
-        android:text="Nenhum produto encontrado"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:textColor="@color/azul_logo"
-        android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@id/edtPesquisar"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        android:layout_gravity="top" />
 
-    <!-- ⏳ Primeira abertura: cobre a tela enquanto os produtos são cadastrados -->
+    <include
+        layout="@layout/barra_selecao_acoes"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom" />
+
+    <!-- Primeira abertura: cobre a tela enquanto os produtos são cadastrados -->
     <LinearLayout
         android:id="@+id/painelCarregando"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:background="@color/branco"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/azul_logo"
         android:clickable="true"
+        android:elevation="12dp"
         android:focusable="true"
         android:gravity="center"
         android:orientation="vertical"
-        android:visibility="gone"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        android:padding="32dp"
+        android:visibility="gone">
 
-        <ProgressBar
+        <ImageView
+            android:layout_width="180dp"
+            android:layout_height="180dp"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_launcher_foreground" />
+
+        <com.google.android.material.progressindicator.CircularProgressIndicator
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:indeterminateTint="@color/azul_logo" />
+            android:indeterminate="true"
+            app:indicatorColor="@color/branco"
+            app:trackColor="@color/branco_20" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="Preparando os produtos..."
-            android:textColor="@color/azul_logo"
-            android:textSize="18sp"
+            android:layout_marginTop="24dp"
+            android:text="Preparando o catálogo…"
+            android:textColor="@color/branco"
+            android:textSize="22sp"
             android:textStyle="bold" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="6dp"
             android:text="Isso acontece só na primeira vez"
-            android:textColor="@color/azul_logo"
-            android:textSize="14sp" />
-
+            android:textColor="@color/texto_sobre_cor"
+            android:textSize="16sp" />
     </LinearLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</FrameLayout>

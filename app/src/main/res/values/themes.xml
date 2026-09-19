@@ -1,18 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.Paiv2"
-        parent="Theme.MaterialComponents.DayNight.DarkActionBar">
-
+    <!--
+        Tema claro fixo: o antigo tema noturno escurecia só a janela, mas os layouts
+        continuavam brancos, e o resultado ficava inconsistente.
+    -->
+    <style name="Theme.Paiv2" parent="Theme.Material3.Light.NoActionBar">
         <item name="colorPrimary">@color/azul_logo</item>
-        <item name="colorPrimaryVariant">@color/azul_logo</item>
         <item name="colorOnPrimary">@color/branco</item>
+        <item name="colorPrimaryContainer">#DCE3FF</item>
+        <item name="colorOnPrimaryContainer">#00174B</item>
 
         <item name="colorSecondary">@color/vermelho_oferta</item>
         <item name="colorOnSecondary">@color/branco</item>
+        <item name="colorSecondaryContainer">#FFDADA</item>
+        <item name="colorOnSecondaryContainer">#410008</item>
 
-        <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
-        
+        <item name="colorTertiary">@color/cat_higiene</item>
+        <item name="colorOnTertiary">@color/branco</item>
+
+        <item name="colorError">@color/vermelho_oferta</item>
+        <item name="colorOnError">@color/branco</item>
+
+        <item name="android:colorBackground">@color/fundo</item>
+        <item name="colorOnBackground">@color/texto_primario</item>
+        <item name="colorSurface">@color/superficie</item>
+        <item name="colorOnSurface">@color/texto_primario</item>
+        <item name="colorSurfaceVariant">@color/superficie_variante</item>
+        <item name="colorOnSurfaceVariant">@color/texto_secundario</item>
+        <item name="colorOutline">@color/contorno_forte</item>
+        <item name="colorOutlineVariant">@color/contorno</item>
+
+        <!-- Sem isto o Material 3 tinge cartões e diálogos de lilás -->
+        <item name="colorSurfaceContainerLowest">@color/superficie</item>
+        <item name="colorSurfaceContainerLow">@color/superficie</item>
+        <item name="colorSurfaceContainer">@color/superficie</item>
+        <item name="colorSurfaceContainerHigh">@color/superficie</item>
+        <item name="colorSurfaceContainerHighest">@color/superficie_variante</item>
+
+        <item name="android:windowBackground">@color/fundo</item>
+
+        <!-- Sem isto o Material 3 tinge de azul os diálogos e cartões elevados -->
+        <item name="elevationOverlayEnabled">false</item>
+    </style>
+
+    <!-- Visualizador: fundo escuro já na abertura, sem piscar em branco -->
+    <style name="Theme.Paiv2.Visualizador" parent="Theme.Paiv2">
+        <item name="android:windowBackground">@color/visualizador_fundo</item>
     </style>
 
 </resources>

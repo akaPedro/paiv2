@@ -1,142 +1,168 @@
 package com.example.paiv2;
 
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
+import android.widget.TextView;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.view.ActionMode;
+import androidx.core.content.ContextCompat;
 
 import com.example.paiv2.entity.Categoria;
 import com.example.paiv2.entity.Produto;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.List;
 
 /**
- * Barra que aparece no topo quando há produtos marcados, com as ações de
- * editar (um só), mover de categoria e excluir em lote.
+ * Barras do modo de seleção: no topo, quantos estão marcados e "Todos";
+ * embaixo, editar (um só), mover e excluir. A tela precisa incluir os layouts
+ * barra_selecao_topo e barra_selecao_acoes.
  */
-public class AcoesEmLote implements ActionMode.Callback {
+public class AcoesEmLote {
 
     private final AppCompatActivity activity;
     private final ProdutoAdapter adapter;
-    // Fica escondida durante a seleção (o botão "+"): tocá-la sairia da tela
+    private final View barraTopo;
+    private final View barraAcoes;
+    private final TextView txtQuantidade;
+    private final MaterialButton btnTodos;
+    private final MaterialButton btnEditar;
+    private final MaterialButton btnPromocao;
+    private final MaterialButton btnMover;
+    private final MaterialButton btnExcluir;
+    // Somem durante a seleção (o botão "Adicionar"): tocar neles sairia da tela
     // e perderia o que já foi marcado
-    private final View esconderDuranteSelecao;
-    private ActionMode modo;
+    private final View[] esconderDuranteSelecao;
+    // A barra de cima cobre este cabeçalho inteiro, para nada dele aparecer por baixo
+    private final View cabecalho;
+    private final OnBackPressedCallback voltar;
+    private View ancoraAvisos;
 
-    private AcoesEmLote(AppCompatActivity activity, ProdutoAdapter adapter, View esconderDuranteSelecao) {
+    private AcoesEmLote(AppCompatActivity activity, ProdutoAdapter adapter, View cabecalho,
+                        View[] esconderDuranteSelecao) {
         this.activity = activity;
         this.adapter = adapter;
+        this.cabecalho = cabecalho;
         this.esconderDuranteSelecao = esconderDuranteSelecao;
-    }
 
-    public static void instalar(AppCompatActivity activity, ProdutoAdapter adapter) {
-        instalar(activity, adapter, null);
-    }
+        barraTopo = activity.findViewById(R.id.barraSelecaoTopo);
+        barraAcoes = activity.findViewById(R.id.barraSelecaoAcoes);
+        txtQuantidade = activity.findViewById(R.id.txtQuantidadeSelecionada);
+        btnTodos = activity.findViewById(R.id.btnSelecionarTodos);
+        btnEditar = activity.findViewById(R.id.btnSelEditar);
+        btnPromocao = activity.findViewById(R.id.btnSelPromocao);
+        btnMover = activity.findViewById(R.id.btnSelMover);
+        btnExcluir = activity.findViewById(R.id.btnSelExcluir);
 
-    public static void instalar(AppCompatActivity activity, ProdutoAdapter adapter, View esconderDuranteSelecao) {
-        AcoesEmLote acoes = new AcoesEmLote(activity, adapter, esconderDuranteSelecao);
-        adapter.setAoMudarSelecao(acoes::aoMudarSelecao);
-    }
+        Janela.recuos(barraTopo, Janela.TOPO);
+        Janela.recuos(barraAcoes, Janela.BASE);
 
-    private void aoMudarSelecao(int quantidade) {
-        if (quantidade == 0) {
-            fechar();
-            return;
-        }
-        if (modo == null) modo = activity.startSupportActionMode(this);
-        if (modo == null) return;
-
-        if (esconderDuranteSelecao != null) esconderDuranteSelecao.setVisibility(View.GONE);
-
-        modo.setTitle(quantidade + (quantidade == 1 ? " selecionado" : " selecionados"));
-        // Mostra ou esconde o "Editar" conforme a quantidade
-        modo.invalidate();
-    }
-
-    private void fechar() {
-        if (modo == null) return;
-        ActionMode aFechar = modo;
-        // Zera antes de finalizar para não voltar aqui pelo onDestroyActionMode
-        modo = null;
-        aFechar.finish();
-    }
-
-    @Override
-    public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-        mode.getMenuInflater().inflate(R.menu.menu_selecao, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-        // Editar só faz sentido com um produto marcado
-        menu.findItem(R.id.acao_editar).setVisible(adapter.getQuantidadeSelecionada() == 1);
-        return true;
-    }
-
-    @Override
-    public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-        int id = item.getItemId();
-
-        if (id == R.id.acao_editar) {
+        activity.findViewById(R.id.btnSairSelecao).setOnClickListener(v -> adapter.sairModoSelecao());
+        btnTodos.setOnClickListener(v -> adapter.selecionarTodos());
+        btnEditar.setOnClickListener(v -> {
             adapter.editarUnicoSelecionado();
-            fechar();
-            return true;
-        }
-        if (id == R.id.acao_mover) {
-            escolherDestino();
-            return true;
-        }
-        if (id == R.id.acao_excluir) {
-            confirmarExclusao();
-            return true;
-        }
-        return false;
+            adapter.sairModoSelecao();
+        });
+        btnPromocao.setOnClickListener(v -> colocarEmPromocao());
+        btnMover.setOnClickListener(v -> escolherDestino());
+        btnExcluir.setOnClickListener(v -> confirmarExclusao());
+
+        // O botão voltar sai da seleção em vez de sair da tela
+        voltar = new OnBackPressedCallback(false) {
+            @Override
+            public void handleOnBackPressed() {
+                adapter.sairModoSelecao();
+            }
+        };
+        activity.getOnBackPressedDispatcher().addCallback(activity, voltar);
+
+        adapter.setAoMudarSelecao(this::atualizar);
     }
 
-    @Override
-    public void onDestroyActionMode(ActionMode mode) {
-        modo = null;
-        if (esconderDuranteSelecao != null) esconderDuranteSelecao.setVisibility(View.VISIBLE);
+    public static AcoesEmLote instalar(AppCompatActivity activity, ProdutoAdapter adapter, View cabecalho,
+                                       View... esconderDuranteSelecao) {
+        return new AcoesEmLote(activity, adapter, cabecalho, esconderDuranteSelecao);
+    }
+
+    /** Os avisos ("3 produtos movidos") aparecem acima desta view, se ela estiver visível. */
+    public void setAncoraAvisos(View ancora) {
+        this.ancoraAvisos = ancora;
+    }
+
+    private void atualizar(boolean ativo, int quantidade) {
+        voltar.setEnabled(ativo);
+        // O cabeçalho da tela inicial muda de altura durante a busca: mede na hora
+        if (ativo) barraTopo.setMinimumHeight(cabecalho.getHeight());
+        barraTopo.setVisibility(ativo ? View.VISIBLE : View.GONE);
+        barraAcoes.setVisibility(ativo ? View.VISIBLE : View.GONE);
+        for (View v : esconderDuranteSelecao) {
+            v.setVisibility(ativo ? View.GONE : View.VISIBLE);
+        }
+        if (!ativo) return;
+
+        txtQuantidade.setText(quantidade == 0
+                ? "Toque nos produtos"
+                : ProdutoUtils.contagem(quantidade, "selecionado", "selecionados"));
+        btnEditar.setEnabled(quantidade == 1);
+        btnPromocao.setEnabled(quantidade > 0);
+        btnMover.setEnabled(quantidade > 0);
+        btnExcluir.setEnabled(quantidade > 0);
+        btnTodos.setText(adapter.todosSelecionados() ? "Nenhum" : "Todos");
+    }
+
+    private void colocarEmPromocao() {
+        final int quantos = adapter.getQuantidadeSelecionada();
+        adapter.colocarSelecionadosEmPromocao();
         adapter.sairModoSelecao();
+        avisar(ProdutoUtils.contagem(quantos, "produto entrou", "produtos entraram") + " na promoção");
     }
 
     private void escolherDestino() {
-        final int quantos = adapter.getQuantidadeSelecionada();
-
-        // Com um só marcado, a lista já vem na categoria atual dele
         List<Produto> marcados = adapter.getSelecionados();
-        Categoria atual = marcados.size() == 1 ? marcados.get(0).getCategoria() : null;
+        final int quantos = marcados.size();
 
-        SeletorCategoria.mostrar(activity, atual, destino ->
+        // Se todos vêm da mesma categoria, ela aparece marcada como "atual"
+        Categoria atual = marcados.isEmpty() ? null : marcados.get(0).getCategoria();
+        for (Produto p : marcados) {
+            if (p.getCategoria() != atual) {
+                atual = null;
+                break;
+            }
+        }
+
+        String titulo = quantos == 1 ? "Mover produto para" : "Mover " + quantos + " produtos para";
+        SeletorCategoria.mostrar(activity, titulo, atual, destino ->
                 adapter.moverSelecionados(destino, () -> {
-                    Toast.makeText(activity,
-                            quantos + (quantos == 1 ? " produto movido para " : " produtos movidos para ")
-                                    + SeletorCategoria.rotulo(destino),
-                            Toast.LENGTH_SHORT).show();
-                    fechar();
+                    adapter.sairModoSelecao();
+                    avisar(ProdutoUtils.contagem(quantos, "produto movido", "produtos movidos")
+                            + " para " + SeletorCategoria.rotulo(destino));
                 }));
     }
 
     private void confirmarExclusao() {
         final int quantos = adapter.getQuantidadeSelecionada();
 
-        new AlertDialog.Builder(activity)
-                .setTitle("Excluir produtos")
-                .setMessage(quantos == 1
-                        ? "Excluir o produto selecionado?"
-                        : "Excluir os " + quantos + " produtos selecionados?")
+        AlertDialog dialog = new MaterialAlertDialogBuilder(activity)
+                .setTitle(quantos == 1 ? "Excluir produto?" : "Excluir " + quantos + " produtos?")
+                .setMessage("Não dá para desfazer depois.")
                 .setPositiveButton("Excluir", (d, w) -> adapter.excluirSelecionados(() -> {
-                    Toast.makeText(activity,
-                            quantos + (quantos == 1 ? " produto excluído" : " produtos excluídos"),
-                            Toast.LENGTH_SHORT).show();
-                    fechar();
+                    adapter.sairModoSelecao();
+                    avisar(ProdutoUtils.contagem(quantos, "produto excluído", "produtos excluídos"));
                 }))
                 .setNegativeButton("Cancelar", null)
                 .show();
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+                .setTextColor(ContextCompat.getColor(activity, R.color.vermelho_oferta));
+    }
+
+    private void avisar(String texto) {
+        Snackbar aviso = Snackbar.make(activity.findViewById(android.R.id.content), texto, Snackbar.LENGTH_LONG);
+        if (ancoraAvisos != null && ancoraAvisos.getVisibility() == View.VISIBLE) {
+            aviso.setAnchorView(ancoraAvisos);
+        }
+        aviso.show();
     }
 }

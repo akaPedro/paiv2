@@ -39,6 +39,9 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.16.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.16.0'
 
+    // Leitura do texto das embalagens para sugerir nomes (funciona sem internet)
+    implementation 'com.google.mlkit:text-recognition:16.0.1'
+
     implementation libs.appcompat
     implementation libs.material
     implementation libs.constraintlayout

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Cores de cada chip são definidas em ChipsCategoria, a partir da cor da categoria -->
+<com.google.android.material.chip.Chip xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/Widget.Material3.Chip.Filter"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:textSize="15sp"
+    app:checkedIconVisible="false"
+    app:chipIconSize="20dp"
+    app:chipIconVisible="true"
+    app:chipMinHeight="44dp"
+    app:chipStrokeWidth="1dp"
+    app:ensureMinTouchTargetSize="true" />

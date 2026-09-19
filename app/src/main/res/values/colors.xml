@@ -1,16 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Marca -->
     <color name="azul_logo">#00236F</color>
     <color name="vermelho_oferta">#C2172F</color>
     <color name="branco">#FFFFFF</color>
 
-    <!-- Véu azulado sobre o card selecionado -->
-    <color name="selecao_overlay">#3300236F</color>
+    <!-- Superfícies e texto (todas as combinações passam no contraste AA) -->
+    <color name="fundo">#F3F5F9</color>
+    <color name="superficie">#FFFFFF</color>
+    <color name="superficie_variante">#E8ECF3</color>
+    <color name="contorno">#D5DAE3</color>
+    <color name="contorno_forte">#9AA3B5</color>
+    <color name="texto_primario">#1B1E26</color>
+    <color name="texto_secundario">#5A6172</color>
+    <color name="texto_sobre_cor">#D9FFFFFF</color>
 
-    <color name="azul_logo_dark">#0E244F</color>
-    <color name="vermelho_oferta_dark">#8F162A</color>
+    <!-- Modo de seleção: cor neutra escura para deixar claro que a tela mudou de modo -->
+    <color name="modo_selecao">#263238</color>
+    <!-- Avisos: produtos repetidos -->
+    <color name="aviso">#A85A00</color>
+    <color name="visualizador_fundo">#0E1014</color>
 
-    <color name="background_dark">#121212</color>
-    <color name="card_dark">#1F1F1F</color>
-    <color name="texto_principal_dark">#E6E6E6</color>
+    <!-- Uma cor por categoria: ajuda a reconhecer a seção sem precisar ler -->
+    <color name="cat_alimentos">#2E7D32</color>
+    <color name="cat_doces">#C2185B</color>
+    <color name="cat_bebidas">#1565C0</color>
+    <color name="cat_higiene">#00838F</color>
+    <color name="cat_outros">#5E35B1</color>
+
+    <color name="branco_20">#33FFFFFF</color>
+    <color name="branco_12">#1FFFFFFF</color>
+    <color name="selecao_veu">#2400236F</color>
 </resources>

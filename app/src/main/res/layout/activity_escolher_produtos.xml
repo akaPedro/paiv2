@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/fundo"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/cabecalho"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/vermelho_oferta"
+        android:orientation="vertical"
+        android:paddingBottom="14dp">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            style="@style/Paiv2.Toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="64dp"
+            app:navigationContentDescription="Fechar"
+            app:navigationIcon="@drawable/ic_fechar"
+            app:title="Escolher produtos" />
+
+        <com.google.android.material.card.MaterialCardView
+            style="@style/Widget.Material3.CardView.Filled"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            app:cardBackgroundColor="@color/superficie"
+            app:cardCornerRadius="26dp"
+            app:cardElevation="0dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingStart="18dp"
+                android:paddingEnd="4dp">
+
+                <ImageView
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_busca"
+                    app:tint="@color/texto_secundario" />
+
+                <EditText
+                    android:id="@+id/edtPesquisar"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@null"
+                    android:hint="Buscar produto"
+                    android:imeOptions="actionSearch"
+                    android:importantForAutofill="no"
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="4dp"
+                    android:textColor="@color/texto_primario"
+                    android:textColorHint="@color/texto_secundario"
+                    android:textSize="16sp" />
+
+                <ImageButton
+                    android:id="@+id/btnLimparBusca"
+                    android:layout_width="44dp"
+                    android:layout_height="44dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="Limpar busca"
+                    android:src="@drawable/ic_fechar"
+                    android:visibility="invisible"
+                    app:tint="@color/texto_secundario" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerEscolher"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingStart="7dp"
+            android:paddingTop="4dp"
+            android:paddingEnd="7dp"
+            android:paddingBottom="16dp" />
+
+        <com.google.android.material.progressindicator.CircularProgressIndicator
+            android:id="@+id/carregandoEscolher"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:indeterminate="true"
+            app:indicatorColor="@color/vermelho_oferta" />
+
+        <TextView
+            android:id="@+id/vazioEscolher"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="60dp"
+            android:gravity="center"
+            android:padding="24dp"
+            android:text="Nenhum produto encontrado"
+            android:textColor="@color/texto_secundario"
+            android:textSize="17sp"
+            android:visibility="gone" />
+    </FrameLayout>
+
+    <LinearLayout
+        android:id="@+id/rodape"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/superficie"
+        android:elevation="8dp"
+        android:orientation="vertical"
+        android:paddingStart="16dp"
+        android:paddingTop="12dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="12dp">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnConfirmar"
+            style="@style/Paiv2.Botao"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:enabled="false"
+            android:text="Marque os produtos em oferta" />
+    </LinearLayout>
+
+</LinearLayout>

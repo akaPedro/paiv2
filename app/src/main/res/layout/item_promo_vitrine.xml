@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Uma das três vagas da vitrine de promoção da tela inicial -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/vitrineCard"
+        style="@style/Widget.Material3.CardView.Filled"
+        android:layout_width="match_parent"
+        android:layout_height="96dp"
+        android:clickable="true"
+        android:focusable="true"
+        app:cardBackgroundColor="@color/superficie"
+        app:cardCornerRadius="14dp"
+        app:cardElevation="0dp">
+
+        <ImageView
+            android:id="@+id/vitrineFoto"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="Produto em promoção"
+            android:padding="6dp"
+            android:scaleType="fitCenter" />
+
+        <ImageView
+            android:id="@+id/vitrineVazia"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_gravity="center"
+            android:importantForAccessibility="no"
+            android:src="@drawable/ic_galeria"
+            app:tint="@color/contorno_forte" />
+    </com.google.android.material.card.MaterialCardView>
+
+    <TextView
+        android:id="@+id/vitrineNome"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:maxLines="1"
+        android:textColor="@color/branco"
+        android:textSize="12sp" />
+
+</LinearLayout>

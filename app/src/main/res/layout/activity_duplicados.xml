@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/fundo"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/cabecalho"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/aviso"
+        android:orientation="vertical">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            style="@style/Paiv2.Toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="64dp"
+            app:navigationContentDescription="Voltar"
+            app:navigationIcon="@drawable/ic_voltar"
+            app:title="Produtos repetidos" />
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerDuplicados"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingTop="8dp"
+            android:paddingBottom="16dp"
+            android:visibility="gone" />
+
+        <LinearLayout
+            android:id="@+id/carregandoDuplicados"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="32dp">
+
+            <com.google.android.material.progressindicator.CircularProgressIndicator
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:indeterminate="true"
+                app:indicatorColor="@color/aviso" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="Comparando as fotos…"
+                android:textColor="@color/texto_primario"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:gravity="center"
+                android:text="Procuro produtos com a mesma foto ou o mesmo nome."
+                android:textColor="@color/texto_secundario"
+                android:textSize="15sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/vazioDuplicados"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="32dp"
+            android:visibility="gone">
+
+            <FrameLayout
+                android:layout_width="104dp"
+                android:layout_height="104dp"
+                android:background="@drawable/fundo_circulo_solido"
+                android:backgroundTint="#D7F2DC">
+
+                <ImageView
+                    android:layout_width="52dp"
+                    android:layout_height="52dp"
+                    android:layout_gravity="center"
+                    android:importantForAccessibility="no"
+                    android:src="@drawable/ic_check"
+                    app:tint="@color/cat_alimentos" />
+            </FrameLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="Nenhum produto repetido"
+                android:textColor="@color/texto_primario"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:gravity="center"
+                android:text="Não encontrei fotos nem nomes iguais no catálogo."
+                android:textColor="@color/texto_secundario"
+                android:textSize="16sp" />
+        </LinearLayout>
+    </FrameLayout>
+
+    <LinearLayout
+        android:id="@+id/rodapeDuplicados"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/superficie"
+        android:elevation="8dp"
+        android:orientation="vertical"
+        android:paddingStart="16dp"
+        android:paddingTop="12dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="12dp"
+        android:visibility="gone">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnExcluirTodos"
+            style="@style/Paiv2.Botao.Contorno"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Excluir todas as cópias de uma vez"
+            android:textColor="@color/vermelho_oferta"
+            app:icon="@drawable/ic_excluir"
+            app:iconTint="@color/vermelho_oferta"
+            app:strokeColor="@color/vermelho_oferta" />
+    </LinearLayout>
+
+</LinearLayout>

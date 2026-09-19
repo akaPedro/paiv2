@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Silhueta para o ícone temático do Android 13+ -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path android:fillColor="#FFFFFF" android:pathData="M34,31h40a2,2 0,0 1,2 2v2H32v-2a2,2 0,0 1,2 -2z" />
+    <path android:fillColor="#FFFFFF" android:pathData="M32,35h44v10H32z" />
+    <path android:fillColor="#FFFFFF" android:pathData="M32,45a2.75,2.75 0,0 0,5.5 0z M37.5,45a2.75,2.75 0,0 0,5.5 0z M43,45a2.75,2.75 0,0 0,5.5 0z M48.5,45a2.75,2.75 0,0 0,5.5 0z M54,45a2.75,2.75 0,0 0,5.5 0z M59.5,45a2.75,2.75 0,0 0,5.5 0z M65,45a2.75,2.75 0,0 0,5.5 0z M70.5,45a2.75,2.75 0,0 0,5.5 0z" />
+    <path android:fillColor="#FFFFFF" android:fillType="evenOdd" android:pathData="M35,50h38v26H35z M38,55h7v8h-7z M63,55h7v8h-7z M48,60h12v16H48z" />
+    <path android:fillColor="#FFFFFF" android:pathData="M33,76h42v3H33z" />
+</vector>

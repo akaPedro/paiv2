@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Espaço em cima e embaixo para a foto não ficar atrás do nome e dos botões -->
+<ImageView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/imgPagina"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:contentDescription="Foto do produto"
+    android:paddingStart="16dp"
+    android:paddingTop="96dp"
+    android:paddingEnd="16dp"
+    android:paddingBottom="220dp"
+    android:scaleType="fitCenter" />
