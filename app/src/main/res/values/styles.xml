@@ -58,10 +58,18 @@
         <item name="rippleColor">@color/branco_20</item>
     </style>
 
-    <!-- Botões da barra de ações da seleção: ícone em cima, texto embaixo -->
+    <!-- Botões da barra de ações da seleção: ícone em cima, texto embaixo. São cinco
+         lado a lado, então não sobra folga nas laterais para o texto caber numa linha -->
     <style name="Paiv2.BotaoAcaoSelecao" parent="Widget.Material3.Button.TextButton">
         <item name="android:minHeight">64dp</item>
-        <item name="android:textSize">14sp</item>
+        <item name="android:minWidth">0dp</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:paddingStart">2dp</item>
+        <item name="android:paddingEnd">2dp</item>
+        <item name="android:insetLeft">0dp</item>
+        <item name="android:insetRight">0dp</item>
         <item name="android:textColor">@color/branco</item>
         <item name="iconTint">@color/branco</item>
         <item name="iconGravity">top</item>

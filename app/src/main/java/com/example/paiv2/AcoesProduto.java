@@ -42,10 +42,10 @@ public final class AcoesProduto {
                 if (uri != null && uri.startsWith("/")) new File(uri).delete();
             }
 
-            // Produto excluído não pode continuar na promoção
+            // Produto excluído não pode continuar numa vitrine
             List<Integer> ids = new ArrayList<>();
             for (Produto p : alvos) ids.add(p.getId());
-            Promocao.remover(context, ids);
+            Vitrine.removerDeTodas(context, ids);
 
             main.post(aoTerminar);
         }).start();

@@ -123,107 +123,20 @@
                     android:orientation="vertical"
                     android:padding="16dp">
 
-                    <!-- Vitrine da promoção: os três primeiros produtos escolhidos -->
-                    <com.google.android.material.card.MaterialCardView
+                    <!-- As duas vitrines: promoção e destaques, três produtos cada -->
+                    <include
                         android:id="@+id/cardPromocao"
-                        style="@style/Widget.Material3.CardView.Filled"
+                        layout="@layout/card_vitrine"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="20dp"
-                        android:clickable="true"
-                        android:focusable="true"
-                        app:cardBackgroundColor="@color/vermelho_oferta"
-                        app:cardCornerRadius="20dp"
-                        app:cardElevation="0dp"
-                        app:rippleColor="@color/branco_20">
+                        android:layout_marginBottom="12dp" />
 
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:padding="16dp">
-
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:gravity="center_vertical"
-                                android:orientation="horizontal">
-
-                                <ImageView
-                                    android:layout_width="22dp"
-                                    android:layout_height="22dp"
-                                    android:importantForAccessibility="no"
-                                    android:src="@drawable/ic_promocao"
-                                    app:tint="@color/branco" />
-
-                                <TextView
-                                    android:layout_width="0dp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginStart="8dp"
-                                    android:layout_weight="1"
-                                    android:text="Promoção"
-                                    android:textColor="@color/branco"
-                                    android:textSize="20sp"
-                                    android:textStyle="bold" />
-
-                                <TextView
-                                    android:id="@+id/txtPromocaoAcao"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:background="@drawable/fundo_pilula"
-                                    android:backgroundTint="@color/branco_20"
-                                    android:paddingStart="12dp"
-                                    android:paddingTop="5dp"
-                                    android:paddingEnd="12dp"
-                                    android:paddingBottom="5dp"
-                                    android:text="Escolher"
-                                    android:textColor="@color/branco"
-                                    android:textSize="14sp"
-                                    android:textStyle="bold" />
-                            </LinearLayout>
-
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="14dp"
-                                android:orientation="horizontal">
-
-                                <include
-                                    android:id="@+id/vitrine1"
-                                    layout="@layout/item_promo_vitrine"
-                                    android:layout_width="0dp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginEnd="6dp"
-                                    android:layout_weight="1" />
-
-                                <include
-                                    android:id="@+id/vitrine2"
-                                    layout="@layout/item_promo_vitrine"
-                                    android:layout_width="0dp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginStart="3dp"
-                                    android:layout_marginEnd="3dp"
-                                    android:layout_weight="1" />
-
-                                <include
-                                    android:id="@+id/vitrine3"
-                                    layout="@layout/item_promo_vitrine"
-                                    android:layout_width="0dp"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginStart="6dp"
-                                    android:layout_weight="1" />
-                            </LinearLayout>
-
-                            <TextView
-                                android:id="@+id/txtPromocaoVazia"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="12dp"
-                                android:text="Toque para escolher os produtos em oferta"
-                                android:textColor="@color/texto_sobre_cor"
-                                android:textSize="15sp" />
-                        </LinearLayout>
-                    </com.google.android.material.card.MaterialCardView>
+                    <include
+                        android:id="@+id/cardDestaque"
+                        layout="@layout/card_vitrine"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="20dp" />
 
                     <!-- Aparece enquanto houver produtos com nome provisório -->
                     <com.google.android.material.card.MaterialCardView

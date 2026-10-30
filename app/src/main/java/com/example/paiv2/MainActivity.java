@@ -1,7 +1,9 @@
 package com.example.paiv2;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -17,6 +19,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -55,9 +58,8 @@ public class MainActivity extends AppCompatActivity {
     private TextView txtNomearTitulo;
     private View cardRepetidos;
     private TextView txtRepetidosTitulo;
-    private View cardPromocao;
-    private View txtPromocaoVazia;
-    private final View[] vitrines = new View[Promocao.DESTAQUES];
+    private final Map<Vitrine, View> cartoesVitrine = new EnumMap<>(Vitrine.class);
+    private static final int[] VAGAS = {R.id.vitVaga1, R.id.vitVaga2, R.id.vitVaga3};
     private View painelCarregando;
 
     private final Map<Categoria, MaterialCardView> cartoesCategoria = new EnumMap<>(Categoria.class);
@@ -91,11 +93,8 @@ public class MainActivity extends AppCompatActivity {
         txtNomearTitulo = findViewById(R.id.txtNomearTitulo);
         cardRepetidos = findViewById(R.id.cardRepetidos);
         txtRepetidosTitulo = findViewById(R.id.txtRepetidosTitulo);
-        cardPromocao = findViewById(R.id.cardPromocao);
-        txtPromocaoVazia = findViewById(R.id.txtPromocaoVazia);
-        vitrines[0] = findViewById(R.id.vitrine1);
-        vitrines[1] = findViewById(R.id.vitrine2);
-        vitrines[2] = findViewById(R.id.vitrine3);
+        cartoesVitrine.put(Vitrine.PROMOCAO, findViewById(R.id.cardPromocao));
+        cartoesVitrine.put(Vitrine.DESTAQUE, findViewById(R.id.cardDestaque));
         painelCarregando = findViewById(R.id.painelCarregando);
 
         Janela.recuos(findViewById(R.id.cabecalho), Janela.TOPO);
@@ -116,9 +115,9 @@ public class MainActivity extends AppCompatActivity {
         cardNomear.setOnClickListener(v -> NomearProdutosActivity.abrir(this, null));
         btnVazioNomear.setOnClickListener(v -> NomearProdutosActivity.abrir(this, null));
         cardRepetidos.setOnClickListener(v -> DuplicadosActivity.abrir(this));
-        cardPromocao.setOnClickListener(v -> abrirPromocao());
+        configurarVitrines();
 
-        // Dá para marcar vários resultados da busca e mover, excluir ou pôr em promoção
+        // Dá para marcar vários resultados da busca e mover, excluir ou pôr numa vitrine
         AcoesEmLote.instalar(this, adapter, findViewById(R.id.cabecalho));
 
         importarAssetsNaPrimeiraAbertura();
@@ -138,8 +137,18 @@ public class MainActivity extends AppCompatActivity {
         return "Boa noite!";
     }
 
-    private void abrirPromocao() {
-        startActivity(new Intent(this, PromocaoActivity.class));
+    /** Cor, ícone, título e atalho de cada vitrine da tela inicial. */
+    private void configurarVitrines() {
+        for (Map.Entry<Vitrine, View> entrada : cartoesVitrine.entrySet()) {
+            Vitrine vitrine = entrada.getKey();
+            MaterialCardView cartao = (MaterialCardView) entrada.getValue();
+            cartao.setCardBackgroundColor(ContextCompat.getColor(this, vitrine.cor));
+            ((ImageView) cartao.findViewById(R.id.vitIcone)).setImageResource(vitrine.icone);
+            ((TextView) cartao.findViewById(R.id.vitTitulo)).setText(vitrine.titulo);
+            ((TextView) cartao.findViewById(R.id.vitVazio))
+                    .setText("Toque para escolher os produtos " + vitrine.onde);
+            cartao.setOnClickListener(v -> VitrineActivity.abrir(this, vitrine));
+        }
     }
 
     private void configurarCartoesCategoria() {
@@ -255,7 +264,7 @@ public class MainActivity extends AppCompatActivity {
         startActivity(CategoriaActivity.novaIntent(this, categoria));
     }
 
-    /** Recarrega contagens, vitrine da promoção e a base da busca. */
+    /** Recarrega contagens, as vitrines e a base da busca. */
     private void carregarResumo() {
         new Thread(() -> {
             List<Produto> todos = db.produtoDao().listarTodos();
@@ -267,7 +276,8 @@ public class MainActivity extends AppCompatActivity {
                 if (p.getCategoria() != null) porCategoria.merge(p.getCategoria(), 1, Integer::sum);
                 if (ProdutoUtils.semNome(p)) semNome++;
             }
-            List<Produto> promocao = Promocao.produtos(this, todos);
+            Map<Vitrine, List<Produto>> vitrines = new EnumMap<>(Vitrine.class);
+            for (Vitrine vitrine : Vitrine.values()) vitrines.put(vitrine, vitrine.produtos(this, todos));
             synchronized (this) {
                 cacheBusca = itens;
             }
@@ -294,45 +304,57 @@ public class MainActivity extends AppCompatActivity {
                 txtNomearTitulo.setText(ProdutoUtils.contagem(faltamNomear,
                         "produto sem nome", "produtos sem nome"));
 
-                atualizarVitrine(promocao);
+                for (Vitrine vitrine : Vitrine.values()) {
+                    atualizarVitrine(vitrine, vitrines.get(vitrine));
+                }
                 rebuscar();
                 procurarRepetidos();
             });
         }).start();
     }
 
-    /** Mostra na tela inicial os três primeiros produtos da promoção. */
-    private void atualizarVitrine(List<Produto> promocao) {
-        txtPromocaoVazia.setVisibility(promocao.isEmpty() ? View.VISIBLE : View.GONE);
+    /** Mostra na tela inicial os três primeiros produtos de uma vitrine. */
+    private void atualizarVitrine(Vitrine vitrine, List<Produto> escolhidos) {
+        View cartao = cartoesVitrine.get(vitrine);
+        cartao.findViewById(R.id.vitVazio)
+                .setVisibility(escolhidos.isEmpty() ? View.VISIBLE : View.GONE);
 
-        for (int i = 0; i < vitrines.length; i++) {
-            View vaga = vitrines[i];
-            MaterialCardView cartao = vaga.findViewById(R.id.vitrineCard);
-            ImageView foto = vaga.findViewById(R.id.vitrineFoto);
-            View semFoto = vaga.findViewById(R.id.vitrineVazia);
-            TextView nome = vaga.findViewById(R.id.vitrineNome);
+        for (int i = 0; i < VAGAS.length; i++) {
+            MaterialCardView vaga = cartao.findViewById(VAGAS[i]);
+            ImageView foto = vaga.findViewById(R.id.imgProduto);
+            TextView nome = vaga.findViewById(R.id.txtNomeProduto);
+            View selo18 = vaga.findViewById(R.id.selo18);
 
-            if (i < promocao.size()) {
-                Produto produto = promocao.get(i);
-                semFoto.setVisibility(View.GONE);
-                foto.setVisibility(View.VISIBLE);
+            Glide.with(this).clear(foto);
+            if (i < escolhidos.size()) {
+                Produto produto = escolhidos.get(i);
+                foto.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                foto.setImageTintList(null);
                 Glide.with(this)
                         .load(ImagemUtils.modelo(produto.getImageUri()))
-                        .override(240, 240)
+                        .override(320, 320)
                         .fitCenter()
                         .error(R.drawable.default_image)
                         .into(foto);
+                boolean semNome = ProdutoUtils.semNome(produto);
                 nome.setText(produto.getNome());
-                cartao.setContentDescription(produto.getNome());
-                cartao.setOnClickListener(v ->
-                        ImagemProdutoActivity.abrir(this, new ArrayList<>(promocao), produto));
+                nome.setTextColor(ContextCompat.getColor(this,
+                        semNome ? R.color.texto_secundario : R.color.texto_primario));
+                nome.setTypeface(null, semNome ? Typeface.NORMAL : Typeface.BOLD);
+                selo18.setVisibility(ProdutoUtils.isAlcoolica(produto) ? View.VISIBLE : View.GONE);
+                vaga.setContentDescription(produto.getNome());
+                vaga.setOnClickListener(v ->
+                        ImagemProdutoActivity.abrir(this, new ArrayList<>(escolhidos), produto));
             } else {
-                Glide.with(this).clear(foto);
-                foto.setVisibility(View.GONE);
-                semFoto.setVisibility(View.VISIBLE);
+                // Vaga livre: a silhueta da galeria no tamanho dela, sem esticar
+                foto.setScaleType(ImageView.ScaleType.CENTER);
+                foto.setImageResource(R.drawable.ic_galeria);
+                foto.setImageTintList(ColorStateList.valueOf(
+                        ContextCompat.getColor(this, R.color.contorno_forte)));
                 nome.setText("");
-                cartao.setContentDescription("Vaga livre na promoção");
-                cartao.setOnClickListener(v -> abrirPromocao());
+                selo18.setVisibility(View.GONE);
+                vaga.setContentDescription("Vaga livre " + vitrine.paraOnde);
+                vaga.setOnClickListener(v -> VitrineActivity.abrir(this, vitrine));
             }
         }
     }

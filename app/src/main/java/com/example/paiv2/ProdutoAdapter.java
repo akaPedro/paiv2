@@ -374,9 +374,9 @@ public class ProdutoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         });
     }
 
-    /** Coloca os produtos marcados na promoção. */
-    public void colocarSelecionadosEmPromocao() {
-        Promocao.adicionar(context, getIdsSelecionados());
+    /** Coloca os produtos marcados na promoção ou nos destaques. */
+    public void colocarSelecionadosEm(Vitrine vitrine) {
+        vitrine.adicionar(context, getIdsSelecionados());
     }
 
     /** Abre o diálogo de edição do único produto marcado. */

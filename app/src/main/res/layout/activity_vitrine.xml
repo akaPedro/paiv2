@@ -1,4 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?><!--
+    Lista de uma vitrine: promoção ou destaques. Título, cor e textos da tela
+    vazia vêm do código, conforme a vitrine aberta.
+-->
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -14,7 +17,6 @@
             android:id="@+id/cabecalho"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/vermelho_oferta"
             android:orientation="vertical">
 
             <com.google.android.material.appbar.MaterialToolbar
@@ -24,8 +26,7 @@
                 android:layout_height="wrap_content"
                 android:minHeight="64dp"
                 app:navigationContentDescription="Voltar"
-                app:navigationIcon="@drawable/ic_voltar"
-                app:title="Promoção" />
+                app:navigationIcon="@drawable/ic_voltar" />
 
             <TextView
                 android:layout_width="match_parent"
@@ -44,15 +45,17 @@
             android:layout_weight="1">
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerPromocao"
+                android:id="@+id/recyclerVitrine"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:clipToPadding="false"
+                android:paddingStart="7dp"
                 android:paddingTop="8dp"
+                android:paddingEnd="7dp"
                 android:paddingBottom="104dp" />
 
             <LinearLayout
-                android:id="@+id/vazioPromocao"
+                android:id="@+id/vazioVitrine"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
@@ -61,35 +64,34 @@
                 android:visibility="gone">
 
                 <FrameLayout
+                    android:id="@+id/vazioCirculo"
                     android:layout_width="104dp"
                     android:layout_height="104dp"
-                    android:background="@drawable/fundo_circulo_solido"
-                    android:backgroundTint="#FBDDE1">
+                    android:background="@drawable/fundo_circulo_solido">
 
                     <ImageView
+                        android:id="@+id/vazioIcone"
                         android:layout_width="48dp"
                         android:layout_height="48dp"
                         android:layout_gravity="center"
-                        android:importantForAccessibility="no"
-                        android:src="@drawable/ic_promocao"
-                        app:tint="@color/vermelho_oferta" />
+                        android:importantForAccessibility="no" />
                 </FrameLayout>
 
                 <TextView
+                    android:id="@+id/vazioTitulo"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
-                    android:text="Nenhum produto em promoção"
                     android:textColor="@color/texto_primario"
                     android:textSize="20sp"
                     android:textStyle="bold" />
 
                 <TextView
+                    android:id="@+id/vazioDica"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="6dp"
                     android:gravity="center"
-                    android:text="Toque em Adicionar produtos e marque o que está em oferta."
                     android:textColor="@color/texto_secundario"
                     android:textSize="16sp" />
             </LinearLayout>
@@ -97,15 +99,13 @@
     </LinearLayout>
 
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-        android:id="@+id/btnAdicionarPromocao"
+        android:id="@+id/btnAdicionar"
         style="@style/Widget.Material3.ExtendedFloatingActionButton.Icon.Primary"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="20dp"
-        android:backgroundTint="@color/vermelho_oferta"
-        android:contentDescription="Adicionar produtos à promoção"
         android:text="Adicionar produtos"
         android:textColor="@color/branco"
         android:textSize="17sp"

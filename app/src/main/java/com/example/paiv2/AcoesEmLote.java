@@ -18,8 +18,8 @@ import java.util.List;
 
 /**
  * Barras do modo de seleção: no topo, quantos estão marcados e "Todos";
- * embaixo, editar (um só), mover e excluir. A tela precisa incluir os layouts
- * barra_selecao_topo e barra_selecao_acoes.
+ * embaixo, editar (um só), promoção, destaque, mover e excluir. A tela precisa
+ * incluir os layouts barra_selecao_topo e barra_selecao_acoes.
  */
 public class AcoesEmLote {
 
@@ -31,6 +31,7 @@ public class AcoesEmLote {
     private final MaterialButton btnTodos;
     private final MaterialButton btnEditar;
     private final MaterialButton btnPromocao;
+    private final MaterialButton btnDestaque;
     private final MaterialButton btnMover;
     private final MaterialButton btnExcluir;
     // Somem durante a seleção (o botão "Adicionar"): tocar neles sairia da tela
@@ -54,6 +55,7 @@ public class AcoesEmLote {
         btnTodos = activity.findViewById(R.id.btnSelecionarTodos);
         btnEditar = activity.findViewById(R.id.btnSelEditar);
         btnPromocao = activity.findViewById(R.id.btnSelPromocao);
+        btnDestaque = activity.findViewById(R.id.btnSelDestaque);
         btnMover = activity.findViewById(R.id.btnSelMover);
         btnExcluir = activity.findViewById(R.id.btnSelExcluir);
 
@@ -66,7 +68,8 @@ public class AcoesEmLote {
             adapter.editarUnicoSelecionado();
             adapter.sairModoSelecao();
         });
-        btnPromocao.setOnClickListener(v -> colocarEmPromocao());
+        btnPromocao.setOnClickListener(v -> colocarEm(Vitrine.PROMOCAO));
+        btnDestaque.setOnClickListener(v -> colocarEm(Vitrine.DESTAQUE));
         btnMover.setOnClickListener(v -> escolherDestino());
         btnExcluir.setOnClickListener(v -> confirmarExclusao());
 
@@ -108,16 +111,18 @@ public class AcoesEmLote {
                 : ProdutoUtils.contagem(quantidade, "selecionado", "selecionados"));
         btnEditar.setEnabled(quantidade == 1);
         btnPromocao.setEnabled(quantidade > 0);
+        btnDestaque.setEnabled(quantidade > 0);
         btnMover.setEnabled(quantidade > 0);
         btnExcluir.setEnabled(quantidade > 0);
         btnTodos.setText(adapter.todosSelecionados() ? "Nenhum" : "Todos");
     }
 
-    private void colocarEmPromocao() {
+    private void colocarEm(Vitrine vitrine) {
         final int quantos = adapter.getQuantidadeSelecionada();
-        adapter.colocarSelecionadosEmPromocao();
+        adapter.colocarSelecionadosEm(vitrine);
         adapter.sairModoSelecao();
-        avisar(ProdutoUtils.contagem(quantos, "produto entrou", "produtos entraram") + " na promoção");
+        avisar(ProdutoUtils.contagem(quantos, "produto entrou", "produtos entraram")
+                + " " + vitrine.paraOnde);
     }
 
     private void escolherDestino() {

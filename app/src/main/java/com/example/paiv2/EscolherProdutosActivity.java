@@ -13,6 +13,7 @@ import android.widget.ImageButton;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -20,18 +21,20 @@ import com.example.paiv2.database.AppDatabase;
 import com.example.paiv2.entity.Produto;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.progressindicator.CircularProgressIndicator;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Escolha de vários produtos, com busca, para entrar na promoção.
+ * Escolha de vários produtos, com busca, para entrar numa vitrine.
  */
 public class EscolherProdutosActivity extends AppCompatActivity {
 
     private static final long ATRASO_BUSCA_MS = 200;
     private static final int COLUNAS = 2;
 
+    private Vitrine vitrine;
     private AppDatabase db;
     private ProdutoAdapter adapter;
     private List<Produto> todos = new ArrayList<>();
@@ -54,6 +57,7 @@ public class EscolherProdutosActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_escolher_produtos);
 
+        vitrine = Vitrine.recebida(getIntent());
         db = AppDatabase.getInstance(this);
 
         Janela.recuos(findViewById(R.id.cabecalho), Janela.TOPO);
@@ -61,7 +65,11 @@ public class EscolherProdutosActivity extends AppCompatActivity {
 
         toolbar = findViewById(R.id.toolbar);
         toolbar.setNavigationOnClickListener(v -> finish());
-        toolbar.setSubtitle("Nenhum marcado");
+
+        int cor = ContextCompat.getColor(this, vitrine.cor);
+        findViewById(R.id.cabecalho).setBackgroundColor(cor);
+        ((CircularProgressIndicator) findViewById(R.id.carregandoEscolher))
+                .setIndicatorColor(cor);
 
         edtPesquisar = findViewById(R.id.edtPesquisar);
         btnLimparBusca = findViewById(R.id.btnLimparBusca);
@@ -69,6 +77,7 @@ public class EscolherProdutosActivity extends AppCompatActivity {
         carregando = findViewById(R.id.carregandoEscolher);
         btnConfirmar = findViewById(R.id.btnConfirmar);
         btnConfirmar.setOnClickListener(v -> confirmar());
+        atualizarRodape(0);
 
         configurarGrade();
         configurarBusca();
@@ -161,14 +170,14 @@ public class EscolherProdutosActivity extends AppCompatActivity {
                 : ProdutoUtils.contagem(quantidade, "marcado", "marcados"));
         btnConfirmar.setEnabled(quantidade > 0);
         btnConfirmar.setText(quantidade == 0
-                ? "Marque os produtos em oferta"
+                ? "Marque os produtos " + vitrine.onde
                 : "Adicionar " + ProdutoUtils.contagem(quantidade, "produto", "produtos"));
     }
 
     private void confirmar() {
         List<Integer> ids = adapter.getIdsSelecionados();
         if (ids.isEmpty()) return;
-        Promocao.adicionar(this, ids);
+        vitrine.adicionar(this, ids);
         setResult(RESULT_OK);
         finish();
     }

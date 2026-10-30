@@ -10,7 +10,6 @@
         android:id="@+id/cabecalho"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/vermelho_oferta"
         android:orientation="vertical"
         android:paddingBottom="14dp">
 
@@ -99,8 +98,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:indeterminate="true"
-            app:indicatorColor="@color/vermelho_oferta" />
+            android:indeterminate="true" />
 
         <TextView
             android:id="@+id/vazioEscolher"

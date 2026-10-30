@@ -42,6 +42,17 @@
         app:iconTint="@color/texto_acao_selecao" />
 
     <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnSelDestaque"
+        style="@style/Paiv2.BotaoAcaoSelecao"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Destaque"
+        android:textColor="@color/texto_acao_selecao"
+        app:icon="@drawable/ic_estrela"
+        app:iconTint="@color/texto_acao_selecao" />
+
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btnSelMover"
         style="@style/Paiv2.BotaoAcaoSelecao"
         android:layout_width="0dp"

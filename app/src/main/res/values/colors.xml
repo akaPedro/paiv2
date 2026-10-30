@@ -3,7 +3,13 @@
     <!-- Marca -->
     <color name="azul_logo">#00236F</color>
     <color name="vermelho_oferta">#C2172F</color>
+    <!-- Destaques: dourado escuro, não se confunde com a promoção nem com as categorias -->
+    <color name="dourado_destaque">#8F5A00</color>
     <color name="branco">#FFFFFF</color>
+
+    <!-- Fundo claro das duas vitrines, para os ícones nas telas vazias -->
+    <color name="vermelho_oferta_claro">#FBDDE1</color>
+    <color name="dourado_destaque_claro">#F2E4C8</color>
 
     <!-- Superfícies e texto (todas as combinações passam no contraste AA) -->
     <color name="fundo">#F3F5F9</color>

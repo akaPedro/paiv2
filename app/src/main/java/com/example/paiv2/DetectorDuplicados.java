@@ -1,6 +1,7 @@
 package com.example.paiv2;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.AssetFileDescriptor;
 import android.os.Handler;
 import android.os.Looper;
@@ -14,9 +15,12 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.security.MessageDigest;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Encontra produtos repetidos comparando o conteúdo das fotos e, quando já têm
@@ -26,6 +30,9 @@ import java.util.Map;
 public final class DetectorDuplicados {
 
     private static final String TAG = "DetectorDuplicados";
+
+    private static final String PREFS = "paiv2_prefs";
+    private static final String KEY_MANTIDOS = "repetidos_mantidos";
 
     public interface AoTerminar {
         void encontrou(List<Grupo> grupos);
@@ -50,6 +57,62 @@ public final class DetectorDuplicados {
     }
 
     private DetectorDuplicados() {
+    }
+
+    /**
+     * Marca um grupo como resolvido: a pessoa disse que essas cópias podem
+     * ficar, então ele não volta a aparecer nem conta no aviso da tela inicial.
+     */
+    public static void manter(Context context, Grupo grupo) {
+        Set<String> mantidos = new HashSet<>(guardados(context));
+        mantidos.add(assinatura(grupo.produtos));
+        prefs(context).edit().putStringSet(KEY_MANTIDOS, mantidos).apply();
+    }
+
+    /** Identifica o grupo pelos ids que o formam, em ordem. */
+    private static String assinatura(List<Produto> produtos) {
+        List<Integer> ids = new ArrayList<>(produtos.size());
+        for (Produto p : produtos) ids.add(p.getId());
+        Collections.sort(ids);
+
+        StringBuilder texto = new StringBuilder();
+        for (Integer id : ids) {
+            if (texto.length() > 0) texto.append('-');
+            texto.append(id);
+        }
+        return texto.toString();
+    }
+
+    private static Set<String> guardados(Context context) {
+        Set<String> mantidos = prefs(context).getStringSet(KEY_MANTIDOS, null);
+        return mantidos == null ? Collections.<String>emptySet() : mantidos;
+    }
+
+    private static SharedPreferences prefs(Context context) {
+        return context.getApplicationContext().getSharedPreferences(PREFS, Context.MODE_PRIVATE);
+    }
+
+    /** Tira os grupos já resolvidos e esquece os que não existem mais. */
+    private static List<Grupo> semOsMantidos(Context context, List<Grupo> grupos) {
+        Set<String> mantidos = guardados(context);
+        if (mantidos.isEmpty()) return grupos;
+
+        List<Grupo> restantes = new ArrayList<>();
+        Set<String> aindaExistem = new HashSet<>();
+        for (Grupo g : grupos) {
+            String assinatura = assinatura(g.produtos);
+            if (mantidos.contains(assinatura)) {
+                aindaExistem.add(assinatura);
+            } else {
+                restantes.add(g);
+            }
+        }
+
+        // Grupo desfeito (cópia excluída, nome mudado) não precisa ficar guardado
+        if (aindaExistem.size() != mantidos.size()) {
+            prefs(context).edit().putStringSet(KEY_MANTIDOS, aindaExistem).apply();
+        }
+        return restantes;
     }
 
     public static void procurar(Context context, AppDatabase db, AoTerminar aoTerminar) {
@@ -107,7 +170,7 @@ public final class DetectorDuplicados {
                     AgrupadorDeRepetidos.mesmaFoto(grupo),
                     AgrupadorDeRepetidos.mesmoNome(grupo)));
         }
-        return grupos;
+        return semOsMantidos(context, grupos);
     }
 
     private static long tamanhoDaFoto(Context context, String uri) {

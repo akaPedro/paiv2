@@ -177,9 +177,13 @@ public class DuplicadosActivity extends AppCompatActivity {
     private void manterTodos(GrupoUi grupoUi) {
         int posicao = grupos.indexOf(grupoUi);
         if (posicao < 0) return;
+
+        // Fica guardado: o grupo não volta a aparecer nem conta no aviso da tela inicial
+        DetectorDuplicados.manter(this, grupoUi.grupo);
         grupos.remove(posicao);
         adapter.notifyItemRemoved(posicao);
         atualizarResumo();
+        avisar("Cópias mantidas");
     }
 
     private void avisar(String texto) {
